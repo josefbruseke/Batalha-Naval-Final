@@ -44,7 +44,20 @@ class ControladorJogador:
         return None
 
     def altera_cadastro(self):
-        pass
+        self.lista_jogadores()
+        dados =  self.__tela_jogador.seleciona_jogador()
+        player = self.pega_jogador_por_nome_e_senha(dados["nome"], dados["senha"])
+
+        if player is not None:
+            novos_dados_jogador =  self.__tela_jogador.pega_dados_jogador()
+            player.nome = novos_dados_jogador["nome"]
+            player.nascimento =  novos_dados_jogador["nascimento"]
+            player.senha = novos_dados_jogador["senha"]
+            self.lista_jogadores()
+            self.__controlador_sistema.abre_opcoes()
+        else:
+            self.__tela_jogador.mostra_mensagem("Jogador não existe")
+            self.altera_cadastro()
 
     def remove_jogador(self):
         self.lista_jogadores()
