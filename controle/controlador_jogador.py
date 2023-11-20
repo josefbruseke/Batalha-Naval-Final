@@ -117,4 +117,6 @@ class ControladorJogador:
     def estah_cadastrado(self, nome, senha):
         for jogador in self.jogadores:
             if jogador.nome == nome and jogador.senha == senha:
-                return True
+                return jogador
+            else:
+                return False
