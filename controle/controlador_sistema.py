@@ -11,6 +11,7 @@ class ControladorSistema:
         self.__controlador_oceano = ControladorOceano(self)
         self.__tela_sistema = TelaSistema()
         self.__controlador_excessao = ControladorExcessao()
+        self.__jogador_logado = None
 
     @property
     def controlador_jogador(self) -> ControladorJogador:
@@ -23,6 +24,9 @@ class ControladorSistema:
     @property
     def controlador_oceano(self) -> ControladorOceano:
         return self.__controlador_oceano
+    
+    def jogador_logado(self, jogador_logado):
+        self.__jogador_logado = jogador_logado
     
     def inicia_cadastro(self):
         self.__controlador_jogador.abre_opcoes_cadastro()
