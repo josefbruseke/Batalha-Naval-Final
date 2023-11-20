@@ -17,13 +17,31 @@ class TelaJogo:
         print("1 - Iniciar partida")
         print("2 - Ver ranking")
         print("0 - Voltar")
+        print("---------------------")
         opcao = int(input("Escolha a opção: "))
         return opcao
 
+    def mostra_resultados(self, duracao, vencedor, pontuacao_jogador, pontuacao_computador):
+        print("------RESULTADOS------")
+        print(f"Duração da partida: {duracao}")
+        print(f"O vencedor da partida foi o: {vencedor}")
+        print(f"Pontuação do jogador: {pontuacao_jogador}")
+        print(f"Pontuação do computador: {pontuacao_computador}")
+        print("---------------------")
+    
+    def mostra_opcoes_final(self):
+        print("------------------------------")
+        print("Selecione a sua opção final:")
+        print("1 - Iniciar um novo jogo")
+        print("2 - Voltar para o Menu Jogo")
+        print("0 - Encerrar o sistema")
+        print("------------------------------")
+        opcao = int(input("Escolhe a opção: "))
+        return opcao
 
     def mostra_mensagem(self, msg):
         print(msg)
 
     def voltar(self):
-        opcao = input("Deseja voltar? [S/N]").upper()
+        opcao = input("Deseja voltar para o meu inicial? [S/N] ").upper()
         return opcao
