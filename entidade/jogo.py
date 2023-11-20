@@ -1,9 +1,13 @@
 class Jogo:
-    def __init__(self, data, duracao, vencedor, pontucao_partida, jogadas):
+    def __init__(self, jogador, data, duracao: str, vencedor: str,
+                  pontucao_partida: int, jogadas: list):
+        self.__jogador = jogador
         self.__data = data
         self.__duracao = duracao
         self.__vencedor = vencedor
         self.__pontuacao_partida = pontucao_partida
+        self.__jogadas = jogadas
+
 
     @property
     def data(self):
@@ -44,3 +48,8 @@ class Jogo:
     @jogadas.setter
     def jogadas(self, jogadas):
         self.__jogadas = jogadas
+
+    def adiciona_na_pontuacao_geral(self, pontuacao_partida):
+        print("funcao inciada")
+        self.__jogador.pontuacao += pontuacao_partida
+        print(self.__jogador.pontuacao)
