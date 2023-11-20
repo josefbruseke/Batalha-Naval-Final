@@ -23,44 +23,52 @@ class ControladorJogo:
     def faz_login(self):
         dados_login = self.__tela_jogo.recebe_login()
         recebe_nome, recebe_senha = dados_login["recebe_nome"], dados_login["recebe_senha"]
-        if self.__controlador_sistema.retorna_estah_cadastrado(recebe_nome, recebe_senha):
-            self.inicia_jogo()
-        else:
-            
+        jogador = self.__controlador_sistema.retorna_estah_cadastrado(recebe_nome, recebe_senha)
+        if jogador == False or jogador == None:
             self.__tela_jogo.mostra_mensagem("Jogador não encontrado!")
             if self.__tela_jogo.voltar() == "S":
                 self.__controlador_sistema.abre_opcoes()
             else:
                 self.faz_login()
+        else:
+            self.inicia_jogo(jogador)
 
-    def inicia_jogo(self):
-        self.abre_menu_jogo()
+    def inicia_jogo(self, jogador):
+        self.abre_menu_jogo(jogador)
 
     def voltar(self):
         self.faz_login()
 
 
-    def abre_menu_jogo(self):
+    def abre_menu_jogo(self, jogador):
         try:
             lista_opcoes = {1: self.inicia_partida, 
                             2: self.mostra_ranking,
                             0: self.voltar}
             opcao_selecionada = self.__tela_jogo.mostra_opcoes()
-            funcao_escolhida = lista_opcoes[opcao_selecionada]
-            funcao_escolhida()
+            if opcao_selecionada == 1:
+                funcao_escolhida = lista_opcoes[opcao_selecionada]
+                funcao_escolhida(jogador)
+            else:
+                funcao_escolhida = lista_opcoes[opcao_selecionada]
+                funcao_escolhida()
         except Exception as e:
             mensagem = "Digite um número entre 0-2, coforme a opção desejada"
             self.__controlador_excessao.handle_value_error(e, mensagem)
             self.abre_menu_jogo()
     
-    def abre_menu_final(self):
+    def abre_menu_final(self, jogador):
         try:
             lista_opcoes = {1: self.inicia_partida,
                             2: self.abre_menu_jogo,
                             0: self.__controlador_sistema.encerra_sistema}
             opcao_selecionada = self.__tela_jogo.mostra_opcoes_final()
-            funcao_escolhida = lista_opcoes[opcao_selecionada]
-            funcao_escolhida()
+            if opcao_selecionada == 1:
+                funcao_escolhida = lista_opcoes[opcao_selecionada]
+                funcao_escolhida(jogador)
+            else:
+                funcao_escolhida = lista_opcoes[opcao_selecionada]
+                funcao_escolhida()
         except Exception as e:
             mensagem = "Digite um número entre 0-2, coforme a opção desejada"
             self.__controlador_excessao.handle_value_error(e, mensagem)
@@ -73,11 +81,10 @@ class ControladorJogo:
         data_formatada = data_atual.strftime("%d/%m/%Y %H:%M:%S")
         return data_formatada
 
-    def inicia_partida(self):
+    def inicia_partida(self, jogador_logado):
         self.__hora_inicio = datetime.now().replace(microsecond=0)
         self.__tela_jogo.mostra_mensagem("Partida iniciada!")
-        self.partida()
-        #self.__controlador_sistema.retorna_armazena_tamanho_oceano()
+        self.partida(jogador_logado)
 
     def mostra_ranking(self):
         self.__controlador_sistema.retorna_ordena_ranking()
@@ -190,7 +197,7 @@ class ControladorJogo:
 
         if oceano_tiros_jogador[linha][coluna] == "O" or oceano_tiros_jogador[linha][coluna] == "X":
             self.__tela_jogo.mostra_mensagem("O tiro foi repetido!")
-            return False  # Retorna False para indicar que o tiro foi repetido e não afeta a pontuação
+            return False 
 
         if oceano_computador[linha][coluna] != "~":
             tiro_acertou = True
@@ -250,7 +257,7 @@ class ControladorJogo:
     
     
 
-    def partida(self): 
+    def partida(self, jogador_logado): 
         tamanho = self.__controlador_sistema.retorna_recebe_tamanho_oceano()
         oceano_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
@@ -281,16 +288,18 @@ class ControladorJogo:
                 self.imprimir_tabuleiro(tamanho, oceano_tiros_jogador.matriz)
             while self.faz_tiro_computador(tamanho, oceano_jogador.matriz, oceano_tiros_computador.matriz):
                 self.faz_tiro_computador(tamanho, oceano_jogador.matriz, oceano_tiros_computador.matriz)
-        self.termina_jogo()
+        self.termina_jogo(jogador_logado)
 
-    def termina_jogo(self):
+    def termina_jogo(self, jogador_logado):
         vencedor = self.__vencedor
         self.__hora_fim = datetime.now().replace(microsecond=0)
         duracao = self.__hora_fim - self.__hora_inicio
         data = self.mostrar_data()
-        jogo = Jogo(data, duracao, vencedor, self.__pontuacao_partida_jogador, self.__jogadas)
-        self.__jogos.append(jogo)   
+        jogo = Jogo(jogador_logado, data, duracao, vencedor, self.__pontuacao_partida_jogador, self.__jogadas)
+        self.__jogos.append(jogo)       
         self.__tela_jogo.mostra_resultados(duracao, vencedor, self.__pontuacao_partida_jogador,
                                             self.__pontuacao_partida_computador)
-        self.abre_menu_final()
+        jogo.adiciona_na_pontuacao_geral(self.__pontuacao_partida_jogador)
+        print(jogador_logado.pontuacao)
+        self.abre_menu_final(jogador_logado)
 
