@@ -1,6 +1,7 @@
 class Jogo:
     def __init__(self, jogador, data, duracao: str, vencedor: str,
                   pontucao_partida: int, jogadas: list):
+        self.__id = None
         self.__jogador = jogador
         self.__data = data
         self.__duracao = duracao
@@ -8,6 +9,13 @@ class Jogo:
         self.__pontuacao_partida = pontucao_partida
         self.__jogadas = jogadas
 
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, id):
+        self.__id = id    
 
     @property
     def data(self):
