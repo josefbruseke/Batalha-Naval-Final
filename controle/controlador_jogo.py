@@ -2,15 +2,14 @@ from datetime import datetime
 from entidade.jogo import Jogo
 from limite.tela_jogo import TelaJogo
 import random
-from controle.controlador_oceano import ControladorOceano
 from controle.controlador_excessao import ControladorExcessao
 from entidade.jogo_dao import JogoDAO
+from entidade.embarcacao import Embarcacao
 
 class ControladorJogo:
     def __init__(self, controlador_sistema) -> None:
         self.__controlador_sistema = controlador_sistema
         self.__tela_jogo = TelaJogo()
-        self.__controlador_oceano = ControladorOceano
         self.__controlador_excessao = ControladorExcessao()
         self.__pontuacao_partida_jogador = 0
         self.__pontuacao_partida_computador = 0
@@ -101,18 +100,24 @@ class ControladorJogo:
 
     def imprimir_tabuleiro(self, tamanho, oceano):
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  # Usaremos letras para as colunas
+        
+        # Imprime cabeçalho das colunas
         print("   " + " ".join(letras[:tamanho]))
+        
         for i, linha in enumerate(oceano):
-            # Use {:2} para formatar a largura da coluna em 2 caracteres
-            print("{:2} {}".format(i, " ".join(linha)))
-        print("   " + " ".join(letras[:tamanho]))
-
-        for linha in oceano:
+            # Imprime número da linha
+            print("{:2} ".format(i), end="")
+            
             for posicao in linha:
                 if isinstance(posicao, Embarcacao):
-                    print(posicao.sigla)
-                else: 
-                    print(posicao)
+                    print(posicao.sigla, end=" ")
+                else:
+                    print(posicao, end=" ")
+            
+            print()  # Move para a próxima linha
+    
+        # Imprime novamente as letras das colunas no final
+        print("   " + " ".join(letras[:tamanho]))
 
     def mapear_letra_numero(self, valor):
         if isinstance(valor, int) and 0 <= valor <= 9:
@@ -167,14 +172,13 @@ class ControladorJogo:
 
                 for linha in range(linha_inicial, linha_final + 1):
                     for coluna in range(coluna_inicial, coluna_final + 1):
-                        oceano[linha][coluna] = sigla_embarcacao #TO DO colocar embarcacao
+                        oceano[linha][coluna] = embarcacao   #TO DO colocar embarcacao
                 return True
         else:
             print("Posição inválida. Tente novamente.")
 
     def posiciona_embarcacao_computador(self, tamanho_oceano, oceano, embarcacao):
         tamanho_embarcacao = embarcacao.vida
-        sigla_embarcacao = embarcacao.sigla
 
         while True:
             linha_inicial = random.randint(0, tamanho_oceano)
@@ -200,7 +204,7 @@ class ControladorJogo:
                 if valido:
                     for linha in range(linha_inicial, linha_final + 1):
                         for coluna in range(coluna_inicial, coluna_final + 1):
-                            oceano[linha][coluna] = sigla_embarcacao #colocar embarcao
+                            oceano[linha][coluna] = embarcacao 
                     return True
 
     def faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador):
@@ -211,10 +215,13 @@ class ControladorJogo:
             return False 
 
         if oceano_computador[linha][coluna] != "~":
-            #to-do embarcacao = oceano_computador[linha][coluna]
-            #to-do embarcao.vida -= 1
+            embarcacao = oceano_computador[linha][coluna]
             tiro_acertou = True
             self.__tela_jogo.mostra_resultado_rodada("Você", "acertou")
+            embarcacao.vida -= 1
+            if embarcacao.vida == 0:
+                self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
+                self.__pontuacao_partida_jogador += 3
             self.__pontuacao_partida_jogador += 1
         else:
             tiro_acertou = False
@@ -234,16 +241,20 @@ class ControladorJogo:
             linha, coluna = random.randint(0, tamanho-1), random.randint(0, tamanho-1)
             if oceano_tiros_computador[linha][coluna] == "~":
                 if oceano_jogador[linha][coluna] != "~":
+                    embarcacao = oceano_jogador[linha][coluna]
                     self.__tela_jogo.mostra_resultado_rodada("O computador", "acertou")
+                    embarcacao.vida -= 1
+                    print("tira vida da embaracao", embarcacao.vida)
                     tiro_acertou = True
-                    self.__pontuacao_partida_computador += 1
+                    if embarcacao.vida == 0:
+                        self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
+                        self.__pontuacao_partida_computador += 3
+                    self.__pontuacao_partida_computador += 1 
                 else:
                     oceano_tiros_computador[linha][coluna] = "O"
                     self.__tela_jogo.mostra_resultado_rodada("O computador", "errou")
                     tiro_acertou = False
                 oceano_tiros_computador[linha][coluna] = "X" if tiro_acertou else "O"
-                if tiro_acertou == True:
-                    self.__pontuacao_partida_computador += 1
                 break
 
 
