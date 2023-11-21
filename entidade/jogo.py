@@ -4,6 +4,7 @@ class Jogo:
         self.__duracao = duracao
         self.__vencedor = vencedor
         self.__pontuacao_partida = pontucao_partida
+        self.__jogadas = jogadas
 
     @property
     def data(self):

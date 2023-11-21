@@ -1,5 +1,5 @@
-from entidade.oceano import Oceano
-'''
+"""from entidade.oceano import Oceano
+
 class TelaEmbarcacao:
     def mostra_embarcacoes(self):
        embarcacoes = Oceano.embarcacoes()
@@ -12,34 +12,39 @@ class TelaEmbarcacao:
         return linha, coluna
             
     def mostra_embarcacoes_disponiveis(self, embarcacoes):
-        pass'''
+        pass
+        """
         
 import PySimpleGUI as sg
 
 class TelaEmbarcacao:
     def mostra_embarcacoes(self):
-        embarcacoes = Oceano.embarcacoes()
-        return embarcacoes 
-    
+        sg.popup('Embarcações:', 'Porta-Aviões (P) - Tamanho: 7', 'Fragata (F) - Tamanho: 10',
+                 'Submarino (S) - Tamanho: 4', 'Bote (B) - Tamanho: 20')
+
     def recebe_posicao_embarcacao(self):
+        sg.theme('DarkBlue')
         layout = [
             [sg.Text('Informe a posição para inserir o barco:')],
             [sg.Text('Linha:'), sg.Input(key='-LINHA-')],
-            [sg.Text('Coluna:'), sg.Input(key='-COLUNA-')],
-            [sg.Button('OK')],
+            [sg.Text('Coluna:'), sg.Input(key='-COLUNA-', size=(5, 1))],
+            [sg.Button('Inserir Barco')],
         ]
 
         window = sg.Window('Posição do Barco', layout)
 
         while True:
             event, values = window.read()
+
             if event == sg.WIN_CLOSED:
-                break
-            if event == 'OK':
+                window.close()
+                return None
+
+            if event == 'Inserir Barco':
                 linha = int(values['-LINHA-'])
                 coluna = values['-COLUNA-'].upper()
                 window.close()
                 return linha, coluna
-            
+
     def mostra_embarcacoes_disponiveis(self, embarcacoes):
-        pass
+        sg.popup('Embarcações disponíveis:', ', '.join(embarcacoes))

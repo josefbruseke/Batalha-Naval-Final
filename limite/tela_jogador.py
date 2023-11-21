@@ -7,7 +7,7 @@
         return {"nome": nome, "data_nascimento": data_nascimento, "senha": senha}
     
     def seleciona_jogador(self):
-        print("------REMOVE CADASTRO------")
+        print("------CADASTRO------")
         nome = input("Digite o nome do Jogador: ")
         senha = input("Digite a senha: ")
         return {"nome": nome, "senha": senha}
@@ -16,8 +16,8 @@
         print("------CADASTRO------")
         print("Selecione a opção desejada")
         print("1 - Fazer Cadastro")
-        print("2 - Remover Cadastro")
-        print("3 - Alterar Cadastro")
+        print("2 - Alterar Cadastro")
+        print("3 - Remover Cadastro")
         print("0 - Voltar")
         print("--------------------")
         opcao = int(input("Escolha a opção: "))
@@ -35,54 +35,19 @@
         pass
  
     def mostra_mensagem(self, msg):
-        print(msg)"""
-
-'''class TelaJogador:
-    def recebe_cadastro(self):
-        print("------CADASTRO------")
-        nome = input("Digite seu nome: ")
-        data_nascimento = input("Digite sua data de nascimento (DD/MM/AAAA): ")
-        senha = input("Digite sua data de senha: ")
-        return {"nome": nome, "data_nascimento": data_nascimento, "senha": senha}
-    
-    def seleciona_jogador(self):
-        print("--------------------------------------------------")
-        nome = input("Digite o nome do Jogador: ")
-        senha = input("Digite a senha: ")
-        return {"nome": nome, "senha": senha}
-    
-    def pega_dados_jogador(self):
-        print("----------- INSIRA OS SEGUINTES DADOS ------------")
-        nome = input("Nome do Player: ")
-        nascimento = input("Data de nascimento do player (##/##/####): ")
-        senha = input("Senha: ")
-        return {"nome": nome, "nascimento" : nascimento, "senha": senha}
-
-    def mostra_historico(self):
-        pass
-
-    def mostra_pontuacao(self):
-        pass
-    
-    def mostra_lista_jogadores(self):
-        pass
- 
-    def mostra_mensagem(self, msg):
-        print(msg)'''
+        print(msg)
+"""
 
 import PySimpleGUI as sg
 
 class TelaJogador:
-    def __init__(self):
-        sg.theme('DarkBlue')
-        self.layout = []
-
     def recebe_cadastro(self):
+        sg.theme('DarkBlue')
         layout = [
-            [sg.Text('------CADASTRO------')],
+            [sg.Text('------REALIZA CADASTRO------')],
             [sg.Text('Digite seu nome:'), sg.Input(key='-NOME-')],
-            [sg.Text('Digite sua data de nascimento (DD/MM/AAAA):'), sg.Input(key='-NASCIMENTO-')],
-            [sg.Text('Digite sua senha:'), sg.Input(key='-SENHA-')],
+            [sg.Text('Digite sua data de nascimento (DD/MM/AAAA):'), sg.Input(key='-DATA_NASCIMENTO-')],
+            [sg.Text('Digite a senha:'), sg.Input(key='-SENHA-', password_char='*')],
             [sg.Button('Cadastrar')],
         ]
 
@@ -90,97 +55,87 @@ class TelaJogador:
 
         while True:
             event, values = window.read()
+
             if event == sg.WIN_CLOSED:
-                break
+                window.close()
+                return None
+
             if event == 'Cadastrar':
                 nome = values['-NOME-']
-                nascimento = values['-NASCIMENTO-']
+                data_nascimento = values['-DATA_NASCIMENTO-']
                 senha = values['-SENHA-']
                 window.close()
-                return {"nome": nome, "data_nascimento": nascimento, "senha": senha}
+                return {"nome": nome, "data_nascimento": data_nascimento, "senha": senha}
 
     def seleciona_jogador(self):
+        sg.theme('DarkBlue')
         layout = [
+            [sg.Text('------SELECIONA JOGADOR------')],
             [sg.Text('Digite o nome do Jogador:'), sg.Input(key='-NOME-')],
-            [sg.Text('Digite a senha:'), sg.Input(key='-SENHA-')],
-            [sg.Button('Selecionar')],
+            [sg.Text('Digite a senha:'), sg.Input(key='-SENHA-', password_char='*')],
+            [sg.Button('Selecionar Jogador')],
         ]
 
         window = sg.Window('Selecionar Jogador', layout)
 
         while True:
             event, values = window.read()
+
             if event == sg.WIN_CLOSED:
-                break
-            if event == 'Selecionar':
+                window.close()
+                return None
+
+            if event == 'Selecionar Jogador':
                 nome = values['-NOME-']
                 senha = values['-SENHA-']
                 window.close()
                 return {"nome": nome, "senha": senha}
 
-    def pega_dados_jogador(self):
+    def opcoes_cadastro(self):
+        sg.theme('DarkBlue')
         layout = [
-            [sg.Text('----------- INSIRA OS SEGUINTES DADOS ------------')],
-            [sg.Text('Nome do Player:'), sg.Input(key='-NOME-')],
-            [sg.Text('Data de nascimento do player (##/##/####):'), sg.Input(key='-NASCIMENTO-')],
-            [sg.Text('Senha:'), sg.Input(key='-SENHA-')],
-            [sg.Button('Inserir')],
+            [sg.Text('------CADASTRO------')],
+            [sg.Text('Selecione a opção desejada')],
+            [sg.Button('Fazer Cadastro')],
+            [sg.Button('Alterar Cadastro')],
+            [sg.Button('Remover Cadastro')],
+            [sg.Button('Voltar')],
         ]
 
-        window = sg.Window('Inserir Dados', layout)
+        window = sg.Window('Opções de Cadastro', layout)
 
         while True:
             event, values = window.read()
+
             if event == sg.WIN_CLOSED:
-                break
-            if event == 'Inserir':
-                nome = values['-NOME-']
-                nascimento = values['-NASCIMENTO-']
-                senha = values['-SENHA-']
                 window.close()
-                return {"nome": nome, "nascimento" : nascimento, "senha": senha}
+                return 0
 
-    def mostra_historico(self, historico):
-        layout = [
-            [sg.Text('Histórico de Partidas:')],
-            [sg.Multiline(historico, size=(30, 10))],
-            [sg.Button('Fechar')],
-        ]
+            if event == 'Fazer Cadastro':
+                window.close()
+                return 1
 
-        window = sg.Window('Histórico de Partidas', layout)
+            if event == 'Alterar Cadastro':
+                window.close()
+                return 2
 
-        while True:
-            event, values = window.read()
-            if event == sg.WIN_CLOSED or event == 'Fechar':
-                break
+            if event == 'Remover Cadastro':
+                window.close()
+                return 3
 
-    def mostra_pontuacao(self, pontuacao):
-        layout = [
-            [sg.Text('Pontuação:')],
-            [sg.Text(pontuacao, key='-PONTUACAO-')],
-            [sg.Button('Fechar')],
-        ]
+            if event == 'Voltar':
+                window.close()
+                return 0
 
-        window = sg.Window('Pontuação', layout)
+    def mostra_historico(self):
+        sg.popup('Histórico não disponível.')
 
-        while True:
-            event, values = window.read()
-            if event == sg.WIN_CLOSED or event == 'Fechar':
-                break
+    def mostra_pontuacao(self):
+        sg.popup('Pontuação não disponível.')
 
-    def mostra_lista_jogadores(self, lista_jogadores):
-        layout = [
-            [sg.Text('Lista de Jogadores:')],
-            [sg.Listbox(lista_jogadores, size=(30, 10))],
-            [sg.Button('Fechar')],
-        ]
-
-        window = sg.Window('Lista de Jogadores', layout)
-
-        while True:
-            event, values = window.read()
-            if event == sg.WIN_CLOSED or event == 'Fechar':
-                break
+    def mostra_lista_jogadores(self):
+        sg.popup('Lista de jogadores não disponível.')
 
     def mostra_mensagem(self, msg):
         sg.popup(msg)
+

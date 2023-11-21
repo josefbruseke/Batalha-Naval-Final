@@ -34,8 +34,6 @@ class ControladorSistema:
     def retorna_ordena_ranking(self):         
         return self.__controlador_jogador.ordena_ranking()
  
-    
-    
     def retorna_estah_cadastrado(self, recebe_nome, recebe_senha):
         return self.__controlador_jogador.estah_cadastrado(recebe_nome, recebe_senha)
     
