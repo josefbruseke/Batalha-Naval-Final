@@ -58,6 +58,5 @@ class Jogo:
         self.__jogadas = jogadas
 
     def adiciona_na_pontuacao_geral(self, pontuacao_partida):
-        print("funcao inciada")
         self.__jogador.pontuacao += pontuacao_partida
         print(self.__jogador.pontuacao)
