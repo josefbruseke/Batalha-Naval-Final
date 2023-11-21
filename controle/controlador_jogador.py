@@ -103,6 +103,11 @@ class ControladorJogador:
             self.__tela_jogador.mostra_mensagem("Jogador não encontrado!")
             self.__controlador_sistema.abre_opcoes()
 
+
+    def atualiza_jogador(self, jogador):
+        self.__jogador_dao.add(jogador)
+
+    
     def ordena_ranking(self):
         jogadores = self.jogadores
         jogadores_ordenados = sorted(jogadores, key=lambda jogador: jogador.pontuacao)
