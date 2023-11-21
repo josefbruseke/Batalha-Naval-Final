@@ -4,6 +4,7 @@ from limite.tela_jogo import TelaJogo
 import random
 from controle.controlador_oceano import ControladorOceano
 from controle.controlador_excessao import ControladorExcessao
+from entidade.jogo_dao import JogoDAO
 
 class ControladorJogo:
     def __init__(self, controlador_sistema) -> None:
@@ -16,9 +17,12 @@ class ControladorJogo:
         self.__hora_inicio = None
         self.__hora_fim = None
         self.__vencedor = None
-        self.__jogos = []
+        self.__jogo_dao = JogoDAO()
         self.__jogadas = []
 
+    @property
+    def jogos(self):
+        return self.__jogo_dao.get_all()
 
     def faz_login(self):
         dados_login = self.__tela_jogo.recebe_login()
@@ -103,6 +107,13 @@ class ControladorJogo:
             print("{:2} {}".format(i, " ".join(linha)))
         print("   " + " ".join(letras[:tamanho]))
 
+        for linha in oceano:
+            for posicao in linha:
+                if isinstance(posicao, Embarcacao):
+                    print(posicao.sigla)
+                else: 
+                    print(posicao)
+
     def mapear_letra_numero(self, valor):
         if isinstance(valor, int) and 0 <= valor <= 9:
             alfabeto = {i: chr(65 + i) for i in range(26)}
@@ -156,7 +167,7 @@ class ControladorJogo:
 
                 for linha in range(linha_inicial, linha_final + 1):
                     for coluna in range(coluna_inicial, coluna_final + 1):
-                        oceano[linha][coluna] = sigla_embarcacao
+                        oceano[linha][coluna] = sigla_embarcacao #TO DO colocar embarcacao
                 return True
         else:
             print("Posição inválida. Tente novamente.")
@@ -189,7 +200,7 @@ class ControladorJogo:
                 if valido:
                     for linha in range(linha_inicial, linha_final + 1):
                         for coluna in range(coluna_inicial, coluna_final + 1):
-                            oceano[linha][coluna] = sigla_embarcacao
+                            oceano[linha][coluna] = sigla_embarcacao #colocar embarcao
                     return True
 
     def faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador):
@@ -200,6 +211,8 @@ class ControladorJogo:
             return False 
 
         if oceano_computador[linha][coluna] != "~":
+            #to-do embarcacao = oceano_computador[linha][coluna]
+            #to-do embarcao.vida -= 1
             tiro_acertou = True
             self.__tela_jogo.mostra_resultado_rodada("Você", "acertou")
             self.__pontuacao_partida_jogador += 1
@@ -296,10 +309,11 @@ class ControladorJogo:
         duracao = self.__hora_fim - self.__hora_inicio
         data = self.mostrar_data()
         jogo = Jogo(jogador_logado, data, duracao, vencedor, self.__pontuacao_partida_jogador, self.__jogadas)
-        self.__jogos.append(jogo)       
+        self.__jogo_dao.add(jogo)       
         self.__tela_jogo.mostra_resultados(duracao, vencedor, self.__pontuacao_partida_jogador,
                                             self.__pontuacao_partida_computador)
         jogo.adiciona_na_pontuacao_geral(self.__pontuacao_partida_jogador)
         print(jogador_logado.pontuacao)
+        self.__controlador_sistema.controlador_jogador.atualiza_jogador(jogador_logado)
         self.abre_menu_final(jogador_logado)
 
