@@ -26,16 +26,14 @@ class ControladorOceano:
         while True:
             try:
                 tamanho = self.__tela_oceano.recebe_tamanho()
-                if not(tamanho > 26 or tamanho < 6):
+                if 6 <= tamanho <= 26:
                     return tamanho
                 else:
                     self.__tela_oceano.mostra_mensagem("Tamanho inválido!")
                     self.__tela_oceano.mostra_mensagem("Forneça um tamanho entre 6 e 26.")
-                    self.recebe_tamanho_oceano()
             except Exception as e:
                 mensagem = "Digite um número válido para o tamanho do oceano"
                 self.__controlador_excessao.handle_value_error(e, mensagem)
-                self.recebe_tamanho_oceano()
 
         
 
