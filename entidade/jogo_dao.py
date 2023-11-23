@@ -5,16 +5,17 @@ class JogoDAO(DAO):
     def __init__(self):
         super().__init__('jogo.pkl')
 
-    def add(self, jogo:Jogo):
+    def add(self, novo_jogo: Jogo):
         max_id = 0
-        for jogo in self.get_all():
-            if max_id < jogo.id:
-                max_id = jogo.id
-        jogo.id = max_id + 1
-        return super().add(jogo.id, jogo)
+        for jogo_existente in self.get_all():
+            if max_id < jogo_existente.id:
+                max_id = jogo_existente.id
+        novo_jogo.id = max_id + 1
+        print("jogo adicionado com id:", novo_jogo.id)
+        return super().add(novo_jogo.id, novo_jogo)
     
     def get(self, id:int):
         return super().get(id)
     
-    def remove(self, jogo):
-        super().remove(jogo.id)
+    def remove(self, id):
+        super().remove(id)
