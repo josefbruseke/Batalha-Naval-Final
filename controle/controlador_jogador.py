@@ -115,11 +115,8 @@ class ControladorJogador:
 
 
     def ordena_ranking(self):
-        jogadores = self.jogadores
-        jogadores_ordenados = sorted(jogadores, key=lambda jogador: jogador.pontuacao, reverse=True)
-        print("Nome Pontuação")
-        for jogador in jogadores_ordenados:
-            print(f"{jogador.nome}: {jogador.pontuacao}")
+        jogadores_ordenados = sorted(self.jogadores, key=lambda jogador: jogador.pontuacao, reverse=True)
+        return self.__tela_jogador.mostra_ranking(jogadores_ordenados)
 
     def lista_jogadores(self):
         for jogador in self.jogadores:
