@@ -64,11 +64,11 @@ class TelaJogador:
     def recebe_cadastro(self):
         sg.theme('DarkBlue')
         layout = [
-            [sg.Text('------REALIZA CADASTRO------')],
-            [sg.Text('Digite seu nome:'), sg.Input(key='-NOME-')],
-            [sg.Text('Digite sua data de nascimento (DD/MM/AAAA):'), sg.Input(key='-DATA_NASCIMENTO-')],
-            [sg.Text('Digite a senha:'), sg.Input(key='-SENHA-', password_char='*')],
-            [sg.Button('Cadastrar')],
+            [sg.Text('Digite seu nome, sua data de nascimento e sua senha.')],
+            [sg.Text('Digite seu nome:', size=(35, 1)), sg.Input(key='-NOME-')],
+            [sg.Text('Digite sua data de nascimento (DD/MM/AAAA):',size=(35, 1)), sg.Input(key='-DATA_NASCIMENTO-')],
+            [sg.Text('Digite a senha:', size=(35, 1)), sg.Input(key='-SENHA-', password_char='*')],
+            [sg.Button('Cadastrar', size=(30, 1))],
         ]
 
         window = sg.Window('Cadastro', layout)
@@ -158,4 +158,33 @@ class TelaJogador:
 
     def mostra_mensagem(self, msg):
         sg.popup(msg)
+    
+    def mostra_ranking(self, jogadores_ordenados):
+        dados_tabela = [[jogador.nome, jogador.pontuacao] for jogador in jogadores_ordenados]
+
+        # Criar layout para a interface gráfica com a tabela
+        layout = [
+            [sg.Table(values=dados_tabela,
+                      headings=['Nome', 'Pontuação'],
+                      auto_size_columns=False,
+                      justification='right',
+                      display_row_numbers=False,
+                      num_rows=min(25, len(dados_tabela)),
+                      key='-TABLE-')],
+            [sg.Button('Fechar')]
+        ]
+
+        # Criar janela
+        window = sg.Window('Ranking', layout)
+
+        # Loop de evento para interagir com a interface gráfica
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED or event == 'Fechar':
+                break
+
+        # Fechar a janela ao sair do loop
+        window.close()
+
 
