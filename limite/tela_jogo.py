@@ -15,7 +15,8 @@
         print("------MENU JOGO------")
         print("Selecione a opção desejada")
         print("1 - Iniciar partida")
-        print("2 - Ver ranking")
+        print("2 - Histório jogador")
+        print("3 - Histórico geral")
         print("0 - Voltar")
         print("---------------------")
         opcao = int(input("Escolha a opção: "))
@@ -39,13 +40,20 @@
         opcao = int(input("Escolhe a opção: "))
         return opcao
 
+    def mostra_historico_geral(self):
+        print("-------HISTORICO GERAL-------")
+        print("ID Data       Horário  Duração Jogador Vencedor Pontuação")
+
+
     def mostra_mensagem(self, msg):
         print(msg)
 
     def voltar(self):
+
+        opcao = input("Deseja voltar? [S/N] ")
+
         opcao = input("Deseja voltar para o meu inicial? [S/N] ").upper()
-        return opcao
-        
+        return opcao     
 """
 
 import PySimpleGUI as sg

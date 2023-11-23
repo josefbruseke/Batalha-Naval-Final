@@ -1,11 +1,30 @@
 class Jogo:
-    def __init__(self, data, duracao, vencedor, pontucao_partida, jogadas):
+    def __init__(self, jogador, data, duracao: str, vencedor: str,
+                  pontucao_partida: int, jogadas: list):
+        self.__id = None
+        self.__jogador = jogador
         self.__data = data
         self.__duracao = duracao
         self.__vencedor = vencedor
         self.__pontuacao_partida = pontucao_partida
         self.__jogadas = jogadas
 
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, id):
+        self.__id = id   
+
+    @property
+    def jogador(self):
+        return self.__jogador
+
+    @jogador.setter
+    def jogador(self, jogador):
+        self.__jogador = jogador    
+ 
     @property
     def data(self):
         return self.__data
@@ -45,3 +64,6 @@ class Jogo:
     @jogadas.setter
     def jogadas(self, jogadas):
         self.__jogadas = jogadas
+
+    def adiciona_na_pontuacao_geral(self, pontuacao_partida):
+        self.__jogador.pontuacao += pontuacao_partida
