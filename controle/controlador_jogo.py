@@ -46,38 +46,73 @@ class ControladorJogo:
     def abre_menu_jogo(self, jogador):
         try:
             lista_opcoes = {1: self.inicia_partida, 
-                            2: self.mostra_ranking,
+                            2: self.__controlador_sistema.controlador_jogador.historico_jogador,
+                            3: self.historico_geral,
                             0: self.voltar}
             opcao_selecionada = self.__tela_jogo.mostra_opcoes()
-            if opcao_selecionada == 1:
-                funcao_escolhida = lista_opcoes[opcao_selecionada]
-                funcao_escolhida(jogador)
-            else:
+            if opcao_selecionada == 1 or opcao_selecionada == 2:
                 funcao_escolhida = lista_opcoes[opcao_selecionada]
                 funcao_escolhida()
+            else:
+                funcao_escolhida = lista_opcoes[opcao_selecionada]
+                funcao_escolhida(jogador)
         except Exception as e:
-            mensagem = "Digite um número entre 0-2, coforme a opção desejada"
+            mensagem = "Digite um número entre 0-3, conforme a opção desejada"
             self.__controlador_excessao.handle_value_error(e, mensagem)
-            self.abre_menu_jogo()
+            self.abre_menu_jogo(jogador)
     
     def abre_menu_final(self, jogador):
         try:
             lista_opcoes = {1: self.inicia_partida,
                             2: self.abre_menu_jogo,
+                            3: self.historico_geral,
                             0: self.__controlador_sistema.encerra_sistema}
             opcao_selecionada = self.__tela_jogo.mostra_opcoes_final()
-            if opcao_selecionada == 1:
-                funcao_escolhida = lista_opcoes[opcao_selecionada]
-                funcao_escolhida(jogador)
-            else:
+            if opcao_selecionada == 0:
                 funcao_escolhida = lista_opcoes[opcao_selecionada]
                 funcao_escolhida()
+            else:
+                funcao_escolhida = lista_opcoes[opcao_selecionada]
+                funcao_escolhida(jogador)
         except Exception as e:
-            mensagem = "Digite um número entre 0-2, coforme a opção desejada"
+            mensagem = "Digite um número entre 0-3, coforme a opção desejada"
             self.__controlador_excessao.handle_value_error(e, mensagem)
-            self.abre_menu_final()
+            self.abre_menu_final(jogador)
 
+    def historico_geral(self, jogador):
+        self.__tela_jogo.mostra_historico_geral()
+        for jogo in self.jogos:
+            print(jogo.id, end='  ')
+            print(jogo.data, end= ' ')
+            print(jogo.duracao, end= ' ')
+            print(jogo.jogador.nome, end= '  ')
+            print(jogo.vencedor, end= '  ')
+            print(jogo.pontuacao_partida)
+        self.abre_voltar(self.abre_menu_jogo, self.historico_geral, jogador)
 
+    def abre_voltar(self, acao_sim, acao_nao, jogador):
+        try:
+            opcao = self.__tela_jogo.voltar()
+            if opcao.upper() == "S":
+                acao_sim(jogador)
+            elif opcao.upper() == "N":
+                acao_nao(jogador)
+            else:
+                self.__tela_jogo.mostra_mensagem("Digite uma opção válida")
+        except Exception as e:
+            mensagem = "Digite corretamente a opção desejada: 'S' (para sim) ou 'N' (para nao)"
+            self.__controlador_excessao.handle_value_error(e, mensagem)
+            self.abre_voltar()
+
+    def remover_historico(self):
+        self.historico_geral()
+        id = input("Digite o id: ")
+        self.__jogo_dao.remove(id)
+        print("jogo removido")
+        self.historico_geral()
+        opcao = input("deseja remover de novo? ")
+        if opcao == 'S':
+            self.remover_historico()
 
     def mostrar_data(self):
         data_atual = datetime.now()
@@ -88,15 +123,6 @@ class ControladorJogo:
         self.__hora_inicio = datetime.now().replace(microsecond=0)
         self.__tela_jogo.mostra_mensagem("Partida iniciada!")
         self.partida(jogador_logado)
-
-    def mostra_ranking(self):
-        self.__controlador_sistema.retorna_ordena_ranking()
-
-        if self.__tela_jogo.voltar() == "S":
-            self.abre_opcoes()
-        else:
-            self.__controlador_sistema.encerra_sistema()
-        
 
     def imprimir_tabuleiro(self, tamanho, oceano):
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  # Usaremos letras para as colunas
@@ -113,7 +139,7 @@ class ControladorJogo:
                     print(posicao.sigla, end=" ")
                 else:
                     print(posicao, end=" ")
-            
+    
             print()  # Move para a próxima linha
     
         # Imprime novamente as letras das colunas no final
@@ -137,7 +163,7 @@ class ControladorJogo:
                 coordenada = input(f"Digite a coordenada {msg} desejada: ")
                 return coordenada
             except ValueError as e:
-                print(e)
+                self.__tela_jogo.mostra_mensagem(e)
     
     def trata_coordenada(self, tamanho_oceano, msg=None):
         while True:
@@ -150,14 +176,13 @@ class ControladorJogo:
                 if 0 <= linha < tamanho_oceano and 0 <= coluna < tamanho_oceano:
                     return linha, coluna
                 else:
-                    print("Coordenadas fora dos limites do tabuleiro. Tente novamente.")
+                    self.__tela_jogo.mostra_mensagem("Coordenadas fora dos limites do tabuleiro. Tente novamente.")
             except ValueError as e:
-                print(e)
+                self.__tela_jogo.mostra_mensagem(e)
         
 
     def posiciona_embarcacao(self, tamanho_oceano, oceano, embarcacao):
         tamanho_embarcacao = embarcacao.vida
-        sigla_embarcacao = embarcacao.sigla
         while True:
             linha_inicial, coluna_inicial = self.trata_coordenada(tamanho_oceano, msg="inicial")
             linha_final, coluna_final = self.trata_coordenada(tamanho_oceano, msg="final")
@@ -167,7 +192,7 @@ class ControladorJogo:
             for linha in range(linha_inicial, linha_final + 1):
                 for coluna in range(coluna_inicial, coluna_final + 1):
                     if oceano[linha][coluna] != "~":
-                        print("Posição já ocupada. Tente novamente.")
+                        self.__tela_jogo.mostra_mensagem("Posição já ocupada. Tente novamente.")
                         return False
 
                 for linha in range(linha_inicial, linha_final + 1):
@@ -175,7 +200,7 @@ class ControladorJogo:
                         oceano[linha][coluna] = embarcacao   #TO DO colocar embarcacao
                 return True
         else:
-            print("Posição inválida. Tente novamente.")
+            self.__tela_jogo.mostra_mensagem("Posição inválida. Tente novamente.")
 
     def posiciona_embarcacao_computador(self, tamanho_oceano, oceano, embarcacao):
         tamanho_embarcacao = embarcacao.vida
@@ -236,7 +261,7 @@ class ControladorJogo:
         return tiro_acertou
     
     def faz_tiro_computador(self, tamanho, oceano_jogador, oceano_tiros_computador):
-        print("Turno do computador:")
+        self.__tela_jogo.mostra_mensagem("Turno do computador:")
         while True:
             linha, coluna = random.randint(0, tamanho-1), random.randint(0, tamanho-1)
             if oceano_tiros_computador[linha][coluna] == "~":
@@ -288,19 +313,17 @@ class ControladorJogo:
         oceano_tiros_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_tiros_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         self.imprimir_tabuleiro(tamanho, oceano_jogador.matriz)
-
         for embarcacao in oceano_jogador.embarcacoes:  
             quantidade = embarcacao.quantidade
-            for restante in range(quantidade, 0, -1):
-                nome_embarcacao = embarcacao.nome
-                tamanho_embarcacao = embarcacao.vida
-                print(f"Quantidade de {nome_embarcacao} para serem posicionados: {restante}")
-                print(f"Posicione o {nome_embarcacao} (tamanho {tamanho_embarcacao})")
-                while True:
-                    if self.posiciona_embarcacao(tamanho, oceano_jogador.matriz, embarcacao):
-                        self.imprimir_tabuleiro(tamanho, oceano_jogador.matriz)
-                        break
-                self.posiciona_embarcacao_computador(tamanho, oceano_computador.matriz, embarcacao)  
+            nome_embarcacao = embarcacao.nome
+            tamanho_embarcacao = embarcacao.vida
+            self.__tela_jogo.mostra_mensagem(f"Quantidade de {nome_embarcacao} para serem posicionados: {quantidade}")
+            self.__tela_jogo.mostra_mensagem(f"Posicione o {nome_embarcacao} (tamanho {tamanho_embarcacao})")
+            while True:
+                if self.posiciona_embarcacao(tamanho, oceano_jogador.matriz, embarcacao):
+                    self.imprimir_tabuleiro(tamanho, oceano_jogador.matriz)
+                    break
+            self.posiciona_embarcacao_computador(tamanho, oceano_computador.matriz, embarcacao)  
 
         while not (self.vencedor_jogador(oceano_tiros_jogador.matriz) or \
                    self.vencedor_computador(oceano_tiros_computador.matriz)):  
@@ -320,11 +343,12 @@ class ControladorJogo:
         duracao = self.__hora_fim - self.__hora_inicio
         data = self.mostrar_data()
         jogo = Jogo(jogador_logado, data, duracao, vencedor, self.__pontuacao_partida_jogador, self.__jogadas)
-        self.__jogo_dao.add(jogo)       
+        self.__controlador_sistema.controlador_jogador.adiciona_jogo(jogador_logado, jogo)
+        print("jogo adicionado na lita do jogador")
+        self.__jogo_dao.add(jogo)
         self.__tela_jogo.mostra_resultados(duracao, vencedor, self.__pontuacao_partida_jogador,
                                             self.__pontuacao_partida_computador)
         jogo.adiciona_na_pontuacao_geral(self.__pontuacao_partida_jogador)
-        print(jogador_logado.pontuacao)
         self.__controlador_sistema.controlador_jogador.atualiza_jogador(jogador_logado)
         self.abre_menu_final(jogador_logado)
 
