@@ -24,6 +24,9 @@ class ControladorSistema:
     def controlador_oceano(self) -> ControladorOceano:
         return self.__controlador_oceano
     
+    def jogador_logado(self, jogador_logado):
+        self.__jogador_logado = jogador_logado
+    
     def inicia_cadastro(self):
         self.__controlador_jogador.abre_opcoes_cadastro()
         self.abre_opcoes()
@@ -33,7 +36,7 @@ class ControladorSistema:
 
     def retorna_ordena_ranking(self):         
         return self.__controlador_jogador.ordena_ranking()
- 
+
     def retorna_estah_cadastrado(self, recebe_nome, recebe_senha):
         return self.__controlador_jogador.estah_cadastrado(recebe_nome, recebe_senha)
     
@@ -44,6 +47,17 @@ class ControladorSistema:
     def retorna_recebe_tamanho_oceano(self):
         return self.__controlador_oceano.recebe_tamanho_oceano()
 
+    def ver_ranking(self):
+        self.__controlador_jogador.ordena_ranking()
+        self.__tela_sistema.mostra_mensagem("Deseja voltar? [S/N]")
+        opcao = input()
+        if opcao.upper() == 'S':
+            self.abre_opcoes()
+        elif opcao.upper() == 'N':
+            self.encerra_sistema()
+        else:
+            self.__tela_sistema.mostra_mensagem("Digite uma opção válida!")
+            self.ver_ranking()
 
     def inicializa_sistema(self):
         self.abre_opcoes()
@@ -52,6 +66,7 @@ class ControladorSistema:
         try: 
             lista_opcoes = {1: self.inicia_login, 
                             2: self.inicia_cadastro,
+                            3: self.ver_ranking,
                             0: self.encerra_sistema}
             opcao_selecionada = self.__tela_sistema.mostra_opcoes()
             funcao_escolhida = lista_opcoes[opcao_selecionada]

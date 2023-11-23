@@ -45,6 +45,6 @@ class TelaEmbarcacao:
                 coluna = values['-COLUNA-'].upper()
                 window.close()
                 return linha, coluna
-
+             
     def mostra_embarcacoes_disponiveis(self, embarcacoes):
         sg.popup('Embarcações disponíveis:', ', '.join(embarcacoes))
