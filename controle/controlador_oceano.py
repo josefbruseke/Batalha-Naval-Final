@@ -10,13 +10,16 @@ from controle.controlador_excessao import ControladorExcessao
 class ControladorOceano:
     def __init__(self, controlador_sistema):
         self.__controlador_sistema = controlador_sistema
-        self.__tela_embarcacao = TelaEmbarcacao()
         self.__controlador_excessao = ControladorExcessao()
         self.__tela_oceano = TelaOceano()
         self.__embarcacoes = [
             PortaAvioes(7),
             Fragata(10),
+            Fragata(10),
             Submarino(4),
+            Submarino(4),
+            Bote(20),
+            Bote(20),
             Bote(20)
         ]
     
