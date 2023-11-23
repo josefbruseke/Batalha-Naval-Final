@@ -40,7 +40,7 @@ class ControladorJogo:
         self.abre_menu_jogo(jogador)
 
     def voltar(self):
-        self.faz_login()
+        self.__controlador_sistema.abre_opcoes()
 
 
     def abre_menu_jogo(self, jogador):
@@ -50,7 +50,7 @@ class ControladorJogo:
                             3: self.historico_geral,
                             0: self.voltar}
             opcao_selecionada = self.__tela_jogo.mostra_opcoes()
-            if opcao_selecionada == 1 or opcao_selecionada == 2:
+            if opcao_selecionada == 0:
                 funcao_escolhida = lista_opcoes[opcao_selecionada]
                 funcao_escolhida()
             else:
@@ -80,16 +80,9 @@ class ControladorJogo:
             self.abre_menu_final(jogador)
 
     def historico_geral(self, jogador):
-        self.__tela_jogo.mostra_historico_geral()
-        for jogo in self.jogos:
-            print(jogo.id, end='  ')
-            print(jogo.data, end= ' ')
-            print(jogo.duracao, end= ' ')
-            print(jogo.jogador.nome, end= '  ')
-            print(jogo.vencedor, end= '  ')
-            print(jogo.pontuacao_partida)
-        self.abre_voltar(self.abre_menu_jogo, self.historico_geral, jogador)
-
+        self.__tela_jogo.mostra_historico_geral(self.jogos)
+        self.abre_menu_jogo()
+        
     def abre_voltar(self, acao_sim, acao_nao, jogador):
         try:
             opcao = self.__tela_jogo.voltar()
@@ -344,7 +337,6 @@ class ControladorJogo:
         data = self.mostrar_data()
         jogo = Jogo(jogador_logado, data, duracao, vencedor, self.__pontuacao_partida_jogador, self.__jogadas)
         self.__controlador_sistema.controlador_jogador.adiciona_jogo(jogador_logado, jogo)
-        print("jogo adicionado na lita do jogador")
         self.__jogo_dao.add(jogo)
         self.__tela_jogo.mostra_resultados(duracao, vencedor, self.__pontuacao_partida_jogador,
                                             self.__pontuacao_partida_computador)
