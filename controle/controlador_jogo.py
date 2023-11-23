@@ -81,8 +81,8 @@ class ControladorJogo:
 
     def historico_geral(self, jogador):
         self.__tela_jogo.mostra_historico_geral(self.jogos)
-        self.abre_menu_jogo()
-        
+        self.abre_menu_jogo(jogador)
+    
     def abre_voltar(self, acao_sim, acao_nao, jogador):
         try:
             opcao = self.__tela_jogo.voltar()
@@ -118,25 +118,7 @@ class ControladorJogo:
         self.partida(jogador_logado)
 
     def imprimir_tabuleiro(self, tamanho, oceano):
-        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  # Usaremos letras para as colunas
-        
-        # Imprime cabeçalho das colunas
-        print("   " + " ".join(letras[:tamanho]))
-        
-        for i, linha in enumerate(oceano):
-            # Imprime número da linha
-            print("{:2} ".format(i), end="")
-            
-            for posicao in linha:
-                if isinstance(posicao, Embarcacao):
-                    print(posicao.sigla, end=" ")
-                else:
-                    print(posicao, end=" ")
-    
-            print()  # Move para a próxima linha
-    
-        # Imprime novamente as letras das colunas no final
-        print("   " + " ".join(letras[:tamanho]))
+        self.__tela_jogo.mostra_tabuleiro(tamanho, oceano, Embarcacao)
 
     def mapear_letra_numero(self, valor):
         if isinstance(valor, int) and 0 <= valor <= 9:
