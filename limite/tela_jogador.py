@@ -161,8 +161,6 @@ class TelaJogador:
     
     def mostra_ranking(self, jogadores_ordenados):
         dados_tabela = [[jogador.nome, jogador.pontuacao] for jogador in jogadores_ordenados]
-
-        # Criar layout para a interface gráfica com a tabela
         layout = [
             [sg.Table(values=dados_tabela,
                       headings=['Nome', 'Pontuação'],
@@ -173,18 +171,11 @@ class TelaJogador:
                       key='-TABLE-')],
             [sg.Button('Fechar')]
         ]
-
-        # Criar janela
         window = sg.Window('Ranking', layout)
-
-        # Loop de evento para interagir com a interface gráfica
         while True:
             event, values = window.read()
-
             if event == sg.WIN_CLOSED or event == 'Fechar':
                 break
-
-        # Fechar a janela ao sair do loop
         window.close()
 
 
