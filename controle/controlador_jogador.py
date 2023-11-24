@@ -101,6 +101,8 @@ class ControladorJogador:
             self.__controlador_sistema.abre_opcoes()
 
     def historico_jogador(self, jogador):
+        self.__tela_jogo.mostra_historico_(self.jogos)
+        self.abre_menu_jogo(jogador)
         lista_jogos = jogador.jogos
         for jogo in lista_jogos:
             print(jogo.id)

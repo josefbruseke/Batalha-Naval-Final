@@ -49,15 +49,8 @@ class ControladorSistema:
 
     def ver_ranking(self):
         self.__controlador_jogador.ordena_ranking()
-        self.__tela_sistema.mostra_mensagem("Deseja voltar? [S/N]")
-        opcao = input()
-        if opcao.upper() == 'S':
-            self.abre_opcoes()
-        elif opcao.upper() == 'N':
-            self.encerra_sistema()
-        else:
-            self.__tela_sistema.mostra_mensagem("Digite uma opção válida!")
-            self.ver_ranking()
+        self.abre_opcoes()
+        
 
     def inicializa_sistema(self):
         self.abre_opcoes()
