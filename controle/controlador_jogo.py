@@ -5,6 +5,8 @@ import random
 from controle.controlador_excessao import ControladorExcessao
 from entidade.jogo_dao import JogoDAO
 from entidade.embarcacao import Embarcacao
+import PySimpleGUI as sg
+
 
 class ControladorJogo:
     def __init__(self, controlador_sistema) -> None:
@@ -29,10 +31,7 @@ class ControladorJogo:
         jogador = self.__controlador_sistema.retorna_estah_cadastrado(recebe_nome, recebe_senha)
         if jogador == False or jogador == None:
             self.__tela_jogo.mostra_mensagem("Jogador não encontrado!")
-            if self.__tela_jogo.voltar() == "S":
-                self.__controlador_sistema.abre_opcoes()
-            else:
-                self.faz_login()
+            self.faz_login()
         else:
             self.inicia_jogo(jogador)
 
@@ -81,7 +80,7 @@ class ControladorJogo:
 
     def historico_geral(self, jogador):
         self.__tela_jogo.mostra_historico_geral(self.jogos)
-        self.abre_menu_jogo()
+        self.abre_menu_jogo(jogador)
         
     def abre_voltar(self, acao_sim, acao_nao, jogador):
         try:
@@ -118,25 +117,89 @@ class ControladorJogo:
         self.partida(jogador_logado)
 
     def imprimir_tabuleiro(self, tamanho, oceano):
-        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"  # Usaremos letras para as colunas
-        
-        # Imprime cabeçalho das colunas
-        print("   " + " ".join(letras[:tamanho]))
-        
+        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        layout = []
+
+        # Cabeçalho das colunas
+        layout.append([sg.Text("   " + " ".join(letras[:tamanho]))])
+
         for i, linha in enumerate(oceano):
-            # Imprime número da linha
-            print("{:2} ".format(i), end="")
+            # Número da linha
+            linha_layout = [sg.Text("{:2} ".format(i))]
             
             for posicao in linha:
                 if isinstance(posicao, Embarcacao):
-                    print(posicao.sigla, end=" ")
+                    linha_layout.append(sg.Text(posicao.sigla, size=(2, 1)))
                 else:
-                    print(posicao, end=" ")
-    
-            print()  # Move para a próxima linha
-    
-        # Imprime novamente as letras das colunas no final
-        print("   " + " ".join(letras[:tamanho]))
+                    linha_layout.append(sg.Text(posicao, size=(2, 1)))
+
+            layout.append(linha_layout)
+
+        # Letras das colunas no final
+        layout.append([sg.Text("    " + "     ".join(letras[:tamanho]))])
+
+        # Adicione um botão "Continuar"
+        layout.append([sg.Button("Continuar")])
+
+        # Crie a janela
+        window = sg.Window('Tabuleiro', layout)
+        event, values = window.read()
+        # Se o botão "Continuar" for pressionado, feche a janela
+        if event == "Continuar":
+            window.close()
+
+    def imprimir_tabuleiro_gui(self, tamanho, oceano):
+        print("imprimir_tabuleiro")
+        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+        # Layout do tabuleiro
+        layout_tabuleiro = []
+        layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
+
+        for i, linha in enumerate(oceano):
+            linha_layout = [sg.Text("{:2} ".format(i))]
+
+            for posicao in linha:
+                if isinstance(posicao, Embarcacao):
+                    linha_layout.append(sg.Text(posicao.sigla, size=(2, 1)))
+                else:
+                    linha_layout.append(sg.Text(posicao, size=(2, 1)))
+
+            layout_tabuleiro.append(linha_layout)
+
+        layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
+
+        # Layout das coordenadas
+        layout_coordenadas = [
+            [sg.Text("Digite a coordenada da Embarcação")],
+            [sg.Text("Coordenada Inicial"), sg.InputText(key='coordenada-inicial', size=(5, 1)), sg.Text("Coordenada Final"), sg.InputText(key='coordenada-final', size=(5, 1))],
+            [sg.Button("OK")]
+        ]
+
+        # Layout geral com duas colunas
+        layout = [
+            [sg.Column(layout_tabuleiro), sg.Column(layout_coordenadas)],
+        ]
+
+        # Crie a janela
+        window = sg.Window('Tabuleiro', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WINDOW_CLOSED:
+                window.close()
+                return None
+
+            if event == "OK":
+                try:
+                    linha = values['coordenada-inicial']
+                    coluna = values['coordenada-final']
+                    window.close()
+                    return linha, coluna
+                except ValueError:
+                    sg.popup_error("Digite coordenadas válidas.")
+
 
     def mapear_letra_numero(self, valor):
         if isinstance(valor, int) and 0 <= valor <= 9:
@@ -150,35 +213,64 @@ class ControladorJogo:
                 return alfabeto[valor]  
         return None
     
-    def recebe_coordenada(self, msg=None):
+    def recebe_coordenada_gui(self, msg=None):
+
+        layout = [
+            [sg.Text(f'Digite a coordenada {msg} desejada: '), sg.InputText(key='coordenada')],
+            [sg.Button('OK')]
+        ]
+
+        window = sg.Window('Recebe Coordenada', layout)
+
         while True:
-            try:
-                coordenada = input(f"Digite a coordenada {msg} desejada: ")
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED:
+                window.close()
+                return None
+
+            if event == 'OK':
+                coordenada = values['coordenada']
+                window.close()
                 return coordenada
-            except ValueError as e:
-                self.__tela_jogo.mostra_mensagem(e)
     
-    def trata_coordenada(self, tamanho_oceano, msg=None):
-        while True:
-            try:
-                coordenada = self.recebe_coordenada(msg)
-                if len(coordenada) < 2 or not coordenada[1:].isdigit() or not coordenada[0].isalpha():
-                    raise ValueError("Digite uma coordenada válida")
-                linha = int(coordenada[1:])
-                coluna = self.mapear_letra_numero(coordenada[0])
-                if 0 <= linha < tamanho_oceano and 0 <= coluna < tamanho_oceano:
-                    return linha, coluna
-                else:
-                    self.__tela_jogo.mostra_mensagem("Coordenadas fora dos limites do tabuleiro. Tente novamente.")
-            except ValueError as e:
-                self.__tela_jogo.mostra_mensagem(e)
+    def trata_coordenada(self, tamanho_oceano, oceano_jogador):
+       print('inicia trata coordenda')
+       while True:
+        try:
+            coordenada_1, coordenada_2 = self.imprimir_tabuleiro_gui(tamanho_oceano, oceano_jogador)
+
+            if len(coordenada_1) < 2 or not coordenada_1[1:].isdigit() or not coordenada_1[0].isalpha() or \
+               len(coordenada_2) < 2 or not coordenada_2[1:].isdigit() or not coordenada_2[0].isalpha():
+                raise ValueError("Digite coordenadas válidas")
+
+            linha1 = int(coordenada_1[1:])
+            coluna1 = self.mapear_letra_numero(coordenada_1[0])
+
+            linha2 = int(coordenada_2[1:])
+            coluna2 = self.mapear_letra_numero(coordenada_2[0])
+
+            if 0 <= linha1 < tamanho_oceano and 0 <= coluna1 < tamanho_oceano and \
+               0 <= linha2 < tamanho_oceano and 0 <= coluna2 < tamanho_oceano:
+                return (linha1, coluna1), (linha2, coluna2)
+            else:
+                self.__tela_jogo.mostra_mensagem("Coordenadas fora dos limites do tabuleiro. Tente novamente.")
+        except ValueError as e:
+            self.__tela_jogo.mostra_mensagem(e)
         
 
     def posiciona_embarcacao(self, tamanho_oceano, oceano, embarcacao):
         tamanho_embarcacao = embarcacao.vida
         while True:
-            linha_inicial, coluna_inicial = self.trata_coordenada(tamanho_oceano, msg="inicial")
-            linha_final, coluna_final = self.trata_coordenada(tamanho_oceano, msg="final")
+            print("inicia while posiciona embarcação")
+            (linha_inicial, coluna_inicial), (linha_final, coluna_final) = self.trata_coordenada(tamanho_oceano, oceano)
+            print("Coordenada 1:")
+            print("Linha:", linha_inicial)
+            print("Coluna:", coluna_inicial)
+
+            print("Coordenada 2:")
+            print("Linha:", linha_final)
+            print("Coluna:", coluna_final)
             break
         if (linha_inicial == linha_final and coluna_final - coluna_inicial == tamanho_embarcacao - 1) or \
             (coluna_inicial == coluna_final and linha_final - linha_inicial == tamanho_embarcacao - 1):
@@ -314,7 +406,6 @@ class ControladorJogo:
             self.__tela_jogo.mostra_mensagem(f"Posicione o {nome_embarcacao} (tamanho {tamanho_embarcacao})")
             while True:
                 if self.posiciona_embarcacao(tamanho, oceano_jogador.matriz, embarcacao):
-                    self.imprimir_tabuleiro(tamanho, oceano_jogador.matriz)
                     break
             self.posiciona_embarcacao_computador(tamanho, oceano_computador.matriz, embarcacao)  
 
