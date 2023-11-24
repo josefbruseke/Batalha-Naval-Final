@@ -151,6 +151,33 @@ class TelaJogo:
 
         # Fechar a janela ao sair do loop
         window.close()
+    
+    def mostra_historico_jogador(self, jogos_jogador):
+        dados_tabela = [[jogo.id, jogo.data, jogo.duracao, jogo.jogador.nome, jogo.vencedor, jogo.pontuacao_partida] for jogo in jogos_jogador]
+
+        # Criar layout para a interface gráfica com a tabela
+        layout = [
+            [sg.Table(values=dados_tabela,
+                    headings=['ID', 'Data', 'Duração', 'Jogador', 'Vencedor', 'Pontuação'],
+                    auto_size_columns=False,
+                    justification='right',
+                    display_row_numbers=False,
+                    num_rows=min(25, len(dados_tabela)),
+                    key='-TABLE-')],
+            [sg.Button('Fechar')]
+        ]
+
+        # Criar janela
+        window = sg.Window('Histórico do Jogador', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED or event == 'Fechar':
+                break
+        # Fechar a janela ao sair do loop
+        window.close()
+
 
     def mostra_resultados(self, duracao, vencedor, pontuacao_jogador, pontuacao_computador):
         sg.popup(
