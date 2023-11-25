@@ -83,10 +83,8 @@ class ControladorJogo:
         self.abre_menu_jogo(jogador)
     
     def historico_jogador(self, jogador):
-        print("abre historico jogador")
-        try:
-            lista_jogos_jogador = self.__controlador_sistema.controlador_jogador.jogadores.jogos
-        except Exception:    
+        lista_jogos_jogador = jogador.jogos
+        if len(lista_jogos_jogador) == 0:
             self.__tela_jogo.mostra_mensagem("O jogador ainda não possui nenhum jogo!")
         self.__tela_jogo.mostra_historico_jogador(lista_jogos_jogador)
         self.abre_menu_jogo(jogador)
@@ -186,8 +184,7 @@ class ControladorJogo:
                 [sg.Text(f"Tamanho: {embarcacao.vida}")],
                 [sg.Text("Coordenada Inicial"), sg.InputText(key='coordenada-inicial', size=(5, 1)), sg.Text("Coordenada Final"), sg.InputText(key='coordenada-final', size=(5, 1))],
                 [sg.Button("OK")]
-            ]
-        print("vai entrar no if")    
+            ]   
         if funcao == 'faz_tiro':
             layout_coordenadas = [
                 [sg.Text("Digite a coordenada do tiro")],
@@ -350,7 +347,7 @@ class ControladorJogo:
             tiro_acertou = True
             self.__tela_jogo.mostra_resultado_rodada("Você", "acertou")
             embarcacao.vida -= 1
-            if embarcacao.vida == 0:
+            if embarcacao.vida <= 0:
                 self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
                 self.__pontuacao_partida_jogador += 3
             self.__pontuacao_partida_jogador += 1
@@ -418,7 +415,6 @@ class ControladorJogo:
         oceano_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_tiros_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_tiros_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
-        self.imprimir_tabuleiro(tamanho, oceano_jogador.matriz)
         for embarcacao in oceano_jogador.embarcacoes: 
             while True:
                 if self.posiciona_embarcacao(tamanho, oceano_jogador.matriz, embarcacao):
@@ -427,7 +423,6 @@ class ControladorJogo:
 
         while not (self.vencedor_jogador(oceano_tiros_jogador.matriz) or \
                    self.vencedor_computador(oceano_tiros_computador.matriz)):  
-            self.imprimir_tabuleiro(tamanho, oceano_tiros_jogador.matriz) 
             self.imprimir_tabuleiro(tamanho, oceano_computador.matriz) 
             while self.faz_tiro_jogador(tamanho, oceano_tiros_jogador.matriz, oceano_computador.matriz):
                 if self.vencedor_jogador(oceano_tiros_jogador.matriz):
