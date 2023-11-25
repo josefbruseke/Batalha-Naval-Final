@@ -68,7 +68,7 @@ class TelaJogo:
             [sg.Button('Login')],
         ]
 
-        window = sg.Window('Login', layout, auto_size_text=True, auto_size_buttons=True)
+        window = sg.Window('Login', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
@@ -94,13 +94,13 @@ class TelaJogo:
         layout = [
             [sg.Text('------MENU JOGO------')],
             [sg.Text('Selecione a opção desejada')],
-            [sg.Button('Iniciar Partida')],
-            [sg.Button('Histórico jogador')],
-            [sg.Button('Histórico geral')],
-            [sg.Button('Voltar')],
+            [sg.Button('Iniciar Partida', size=(20, 2))],
+            [sg.Button('Histórico jogador', size=(20, 2))],
+            [sg.Button('Histórico geral', size=(20, 2))],
+            [sg.Button('Voltar', size=(20, 2))],
         ]
 
-        window = sg.Window('Menu Jogo', layout, auto_size_text=True, auto_size_buttons=True)
+        window = sg.Window('Menu Jogo', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
@@ -141,7 +141,7 @@ class TelaJogo:
         ]
 
         # Criar janela
-        window = sg.Window('Histórico Geral', layout, auto_size_text=True, auto_size_buttons=True)
+        window = sg.Window('Histórico Geral', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
@@ -198,7 +198,7 @@ class TelaJogo:
             [sg.Button('Encerrar o Sistema')],
         ]
 
-        window = sg.Window('Opções Finais', layout, size=(600, 400), auto_size_text=True, auto_size_buttons=True)
+        window = sg.Window('Opções Finais', layout, size=(600, 400), auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()

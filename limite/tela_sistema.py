@@ -29,7 +29,7 @@ class TelaSistema:
             [sg.Button('Encerrar o sistema', key='0', size=(20, 2))],
         ]
 
-        window = sg.Window('Menu Inicial', layout, size=(400, 300), grab_anywhere=True, auto_size_text=True, auto_size_buttons=True)
+        window = sg.Window('Menu Inicial', layout, size=(400, 300), grab_anywhere=True, element_justification='center')
 
         while True:
             event, values = window.read()
