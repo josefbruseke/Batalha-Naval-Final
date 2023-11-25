@@ -19,8 +19,8 @@ class ControladorJogador:
     def abre_opcoes_cadastro(self):
         try: 
             lista_opcoes = {1: self.cadastra_jogador,
-                            2: self.remove_jogador,
-                            3: self.altera_cadastro,
+                            2: self.altera_cadastro,
+                            3: self.remove_jogador,
                             0: self.__controlador_sistema.abre_opcoes}
             opcao_selecionada = self.__tela_jogador.opcoes_cadastro()
             funcao_escolhida = lista_opcoes[opcao_selecionada]
