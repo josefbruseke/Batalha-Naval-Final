@@ -130,19 +130,47 @@ class TelaJogador:
             if event == sg.WIN_CLOSED:
                 window.close()
                 return 0
-
             if event == 'Fazer Cadastro':
                 window.close()
                 return 1
-
             if event == 'Alterar Cadastro':
                 window.close()
                 return 2
-
             if event == 'Remover Cadastro':
                 window.close()
                 return 3
+            if event == 'Voltar':
+                window.close()
+                return 0
 
+    def opcoes_cadastro(self):
+        sg.theme('DarkBlue')
+        layout = [
+            [sg.Text('------CADASTRO------')],
+            [sg.Text('Selecione a opção desejada')],
+            [sg.Button('Alterar Senha')],
+            [sg.Button('Alterar Nome')],
+            [sg.Button('Alterar Data de Nascimento')],
+            [sg.Button('Voltar')],
+        ]
+
+        window = sg.Window('Alterar Cadastro', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED:
+                window.close()
+                return 0
+            if event == 'Alterar Senha':
+                window.close()
+                return 1
+            if event == 'Alterar Nome':
+                window.close()
+                return 2
+            if event == 'Alterar Data de Nascimento':
+                window.close()
+                return 3
             if event == 'Voltar':
                 window.close()
                 return 0
