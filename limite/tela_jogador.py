@@ -206,4 +206,6 @@ class TelaJogador:
                 break
         window.close()
 
+    def mostra_lista_jogadores(self ):
+        pass
 
