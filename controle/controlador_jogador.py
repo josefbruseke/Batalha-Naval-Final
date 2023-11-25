@@ -121,8 +121,9 @@ class ControladorJogador:
         return self.__tela_jogador.mostra_ranking(jogadores_ordenados)
 
     def lista_jogadores(self):
+        lista_jogadores = []
         for jogador in self.jogadores:
-            self.__tela_jogador.mostra_mensagem(f"nome: {jogador.nome}")
+            lista_jogadores.append(jogador.nome)
 
     def estah_cadastrado(self, nome, senha):
         for jogador in self.jogadores:
