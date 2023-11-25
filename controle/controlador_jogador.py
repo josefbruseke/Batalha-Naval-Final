@@ -32,7 +32,6 @@ class ControladorJogador:
 
     def cadastra_jogador(self):
         dados_jogador = self.__tela_jogador.recebe_cadastro()
-
         try:
             data_nascimento = datetime.datetime.strptime(dados_jogador["data_nascimento"], "%d/%m/%Y")
         except ValueError:
@@ -56,7 +55,8 @@ class ControladorJogador:
             if jogador.nome == nome and jogador.senha == senha:
                 return jogador
         return None
-
+    
+    
     def altera_cadastro(self):
         for jogador in self.jogadores:
             print(jogador.nome, jogador)
@@ -124,7 +124,8 @@ class ControladorJogador:
         lista_jogadores = []
         for jogador in self.jogadores:
             lista_jogadores.append(jogador.nome)
-
+        return self.__tela_jogador.mostra_lista_jogadores(lista_jogadores)
+    
     def estah_cadastrado(self, nome, senha):
         for jogador in self.jogadores:
             if jogador.nome == nome and jogador.senha == senha: 
