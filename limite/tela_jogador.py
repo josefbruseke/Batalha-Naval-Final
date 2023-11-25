@@ -62,7 +62,7 @@ import PySimpleGUI as sg
 
 class TelaJogador:
     def recebe_cadastro(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('Digite seu nome, sua data de nascimento e sua senha.')],
             [sg.Text('Digite seu nome:', size=(35, 1)), sg.Input(key='-NOME-')],
@@ -71,7 +71,7 @@ class TelaJogador:
             [sg.Button('Cadastrar', size=(30, 1))],
         ]
 
-        window = sg.Window('Cadastro', layout)
+        window = sg.Window('Cadastro', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -96,7 +96,7 @@ class TelaJogador:
             [sg.Button('Selecionar Jogador')],
         ]
 
-        window = sg.Window('Selecionar Jogador', layout)
+        window = sg.Window('Selecionar Jogador', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -112,7 +112,7 @@ class TelaJogador:
                 return {"nome": nome, "senha": senha}
 
     def opcoes_cadastro(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------CADASTRO------')],
             [sg.Text('Selecione a opção desejada')],
@@ -122,7 +122,7 @@ class TelaJogador:
             [sg.Button('Voltar')],
         ]
 
-        window = sg.Window('Opções de Cadastro', layout)
+        window = sg.Window('Opções de Cadastro', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -171,7 +171,7 @@ class TelaJogador:
                       key='-TABLE-')],
             [sg.Button('Fechar')]
         ]
-        window = sg.Window('Ranking', layout)
+        window = sg.Window('Ranking', layout, auto_size_text=True, auto_size_buttons=True)
         while True:
             event, values = window.read()
             if event == sg.WIN_CLOSED or event == 'Fechar':

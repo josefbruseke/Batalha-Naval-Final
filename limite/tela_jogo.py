@@ -60,7 +60,7 @@ import PySimpleGUI as sg
 
 class TelaJogo:
     def recebe_login(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------LOGIN------')],
             [sg.Text('Digite seu nome:'), sg.Input(key='-NOME-')],
@@ -68,7 +68,7 @@ class TelaJogo:
             [sg.Button('Login')],
         ]
 
-        window = sg.Window('Login', layout)
+        window = sg.Window('Login', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -90,7 +90,7 @@ class TelaJogo:
         sg.popup(f"{jogador} {resultado} o tiro")
 
     def mostra_opcoes(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------MENU JOGO------')],
             [sg.Text('Selecione a opção desejada')],
@@ -100,7 +100,7 @@ class TelaJogo:
             [sg.Button('Voltar')],
         ]
 
-        window = sg.Window('Menu Jogo', layout)
+        window = sg.Window('Menu Jogo', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -141,7 +141,7 @@ class TelaJogo:
         ]
 
         # Criar janela
-        window = sg.Window('Histórico Geral', layout)
+        window = sg.Window('Histórico Geral', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -168,7 +168,7 @@ class TelaJogo:
         ]
 
         # Criar janela
-        window = sg.Window('Histórico do Jogador', layout)
+        window = sg.Window('Histórico do Jogador', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
@@ -189,7 +189,7 @@ class TelaJogo:
         )
 
     def mostra_opcoes_final(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------------------------------')],
             [sg.Text('Selecione a sua opção final:')],
@@ -198,7 +198,7 @@ class TelaJogo:
             [sg.Button('Encerrar o Sistema')],
         ]
 
-        window = sg.Window('Opções Finais', layout, size=(600, 400))
+        window = sg.Window('Opções Finais', layout, size=(600, 400), auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()

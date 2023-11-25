@@ -23,7 +23,7 @@ class TelaEmbarcacao:
                  'Submarino (S) - Tamanho: 4', 'Bote (B) - Tamanho: 20')
 
     def recebe_posicao_embarcacao(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('Informe a posição para inserir o barco:')],
             [sg.Text('Linha:'), sg.Input(key='-LINHA-')],
@@ -31,7 +31,7 @@ class TelaEmbarcacao:
             [sg.Button('Inserir Barco')],
         ]
 
-        window = sg.Window('Posição do Barco', layout)
+        window = sg.Window('Posição do Barco', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
