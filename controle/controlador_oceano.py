@@ -26,19 +26,19 @@ class ControladorOceano:
 
     
     def recebe_tamanho_oceano(self):
-        try:
-            tamanho = self.__tela_oceano.recebe_tamanho()
-            print(tamanho)
-            if 6 <= tamanho <= 26:
-                return tamanho
-            else:
-                self.__tela_oceano.mostra_mensagem("Tamanho inválido! Forneça um tamanho entre 6 e 26.")
-                self.recebe_tamanho_oceano()
-        except Exception as e:
-            mensagem = "Digite um número válido para o tamanho do oceano"
-            self.__controlador_excessao.handle_value_error(e, mensagem)
+        while True:
+            try:
+                tamanho = self.__tela_oceano.recebe_tamanho()
+                print(tamanho)
+                if tamanho is not None and 6 <= tamanho <= 26:
+                    return tamanho
+                else:
+                    self.__tela_oceano.mostra_mensagem("Tamanho inválido! Forneça um tamanho entre 6 e 26.")
+            except Exception as e:
+                mensagem = "Erro ao receber o tamanho do oceano."
+                self.__tela_oceano.mostra_mensagem(mensagem)
 
-    
+
 
     def cria_oceano(self, tamanho):
         matriz = [["~" for _ in range(tamanho)] for _ in range(tamanho)]
