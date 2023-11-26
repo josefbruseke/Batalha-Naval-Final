@@ -62,7 +62,7 @@ import PySimpleGUI as sg
 
 class TelaJogador:
     def recebe_cadastro(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('Digite seu nome, sua data de nascimento e sua senha.')],
             [sg.Text('Digite seu nome:', size=(35, 1)), sg.Input(key='-NOME-')],
@@ -71,7 +71,7 @@ class TelaJogador:
             [sg.Button('Cadastrar', size=(30, 1))],
         ]
 
-        window = sg.Window('Cadastro', layout)
+        window = sg.Window('Cadastro', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
@@ -88,7 +88,7 @@ class TelaJogador:
                 return {"nome": nome, "data_nascimento": data_nascimento, "senha": senha}
 
     def seleciona_jogador(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------SELECIONA JOGADOR------')],
             [sg.Text('Digite o nome do Jogador:'), sg.Input(key='-NOME-')],
@@ -96,7 +96,7 @@ class TelaJogador:
             [sg.Button('Selecionar Jogador')],
         ]
 
-        window = sg.Window('Selecionar Jogador', layout)
+        window = sg.Window('Selecionar Jogador', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
@@ -112,17 +112,17 @@ class TelaJogador:
                 return {"nome": nome, "senha": senha}
 
     def opcoes_cadastro(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------CADASTRO------')],
             [sg.Text('Selecione a opção desejada')],
-            [sg.Button('Fazer Cadastro')],
-            [sg.Button('Alterar Cadastro')],
-            [sg.Button('Remover Cadastro')],
-            [sg.Button('Voltar')],
+            [sg.Button('Fazer Cadastro', size=(20, 2))],
+            [sg.Button('Alterar Cadastro', size=(20, 2))],
+            [sg.Button('Remover Cadastro', size=(20, 2))],
+            [sg.Button('Voltar', size=(20, 2))],
         ]
 
-        window = sg.Window('Opções de Cadastro', layout)
+        window = sg.Window('Opções de Cadastro', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
@@ -254,7 +254,7 @@ class TelaJogador:
                       key='-TABLE-')],
             [sg.Button('Fechar')]
         ]
-        window = sg.Window('Ranking', layout)
+        window = sg.Window('Ranking', layout, auto_size_text=True, auto_size_buttons=True)
         while True:
             event, values = window.read()
             if event == sg.WIN_CLOSED or event == 'Fechar':
