@@ -11,7 +11,6 @@ class JogoDAO(DAO):
             if max_id < jogo_existente.id:
                 max_id = jogo_existente.id
         novo_jogo.id = max_id + 1
-        print("jogo adicionado com id:", novo_jogo.id)
         return super().add(novo_jogo.id, novo_jogo)
     
     def get(self, id:int):

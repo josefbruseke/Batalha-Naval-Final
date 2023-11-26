@@ -83,27 +83,12 @@ class ControladorJogo:
         self.abre_menu_jogo(jogador)
     
     def historico_jogador(self, jogador):
-        print("abre historico jogador")
-        try:
-            lista_jogos_jogador = self.__controlador_sistema.controlador_jogador.jogadores.jogos
-        except Exception:    
+        lista_jogos_jogador = jogador.jogos
+        if len(lista_jogos_jogador) == 0:
             self.__tela_jogo.mostra_mensagem("O jogador ainda não possui nenhum jogo!")
         self.__tela_jogo.mostra_historico_jogador(lista_jogos_jogador)
         self.abre_menu_jogo(jogador)
         
-    def abre_voltar(self, acao_sim, acao_nao, jogador):
-        try:
-            opcao = self.__tela_jogo.voltar()
-            if opcao.upper() == "S":
-                acao_sim(jogador)
-            elif opcao.upper() == "N":
-                acao_nao(jogador)
-            else:
-                self.__tela_jogo.mostra_mensagem("Digite uma opção válida")
-        except Exception as e:
-            mensagem = "Digite corretamente a opção desejada: 'S' (para sim) ou 'N' (para nao)"
-            self.__controlador_excessao.handle_value_error(e, mensagem)
-            self.abre_voltar()
 
     def remover_historico(self):
         self.historico_geral()
@@ -145,7 +130,7 @@ class ControladorJogo:
             layout.append(linha_layout)
 
         # Letras das colunas no final
-        layout.append([sg.Text("    " + "     ".join(letras[:tamanho]))])
+        layout.append([sg.Text("  " + "  ".join(letras[:tamanho]))])
 
         # Adicione um botão "Continuar"
         layout.append([sg.Button("Continuar")])
@@ -157,43 +142,63 @@ class ControladorJogo:
         if event == "Continuar":
             window.close()
 
-    def imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, embarcacao=None):
+    def layout_tabuleiro(self, tamanho, oceano):
         print("imprimir_tabuleiro")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-        # Layout do tabuleiro
         layout_tabuleiro = []
+
+        # Adiciona a linha de letras
         layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
 
-        for i, linha in enumerate(oceano):
+        for i in range(tamanho):
             linha_layout = [sg.Text("{:2} ".format(i))]
 
-            for posicao in linha:
-                if isinstance(posicao, Embarcacao):
-                    linha_layout.append(sg.Text(posicao.sigla, size=(2, 1)))
-                else:
-                    linha_layout.append(sg.Text(posicao, size=(2, 1)))
+            for j in range(tamanho):
+                posicao = oceano[i][j]
 
+                # Crie um botão para cada posição
+                button = sg.Button(posicao.sigla if isinstance(posicao, Embarcacao) else posicao, size=(10, 2), key=(i, j))
+                linha_layout.append(button)
             layout_tabuleiro.append(linha_layout)
 
         layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
+        return layout_tabuleiro
+    
+    def layout_coloca_embarcacoes(self, nome, tamanho):
+        print("inicia layout coloca_embarcacoes")
+        layout = [
+                [sg.Text(f"Digite as coordenadas da embarcação a ser posicionada")],
+                [sg.Text(f"Embarcação: {nome}")],
+                [sg.Text(f"Tamanho: {tamanho}")],
+                [sg.Text("Coordenada Inicial"), sg.InputText(key='coordenada-inicial', size=(5, 1)), sg.Text("Coordenada Final"), sg.InputText(key='coordenada-final', size=(5, 1))],
+            ]
+        return layout
+    
+    def layout_faz_tiro(self):
+        layout = [
+                [sg.Text("Digite a coordenada do tiro")],
+                [sg.Text("Coordenada do tiro"), sg.InputText(key='coordenada-tiro', size=(5, 1))],
+            ]
+        return layout
+
+    def get_coordinates(self, window, funcao):
+        print("inicia get_coodinates")
+        event, values = window.read()
+        if event == sg.WINDOW_CLOSED:
+            return None
+        return [event] if funcao == 'faz_tiro' else [event, None]
+
+
+    def imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, nome_embarcacao=None, tamanho_embarcacao=None):
+        print("inicou tabuleiro_gui")
+
+        layout_tabuleiro = self.layout_tabuleiro(tamanho, oceano)
 
         # Layout das coordenadas
         if funcao == 'coloca_embarcacoes':
-            layout_coordenadas = [
-                [sg.Text(f"Digite as coordenadas da embarcação a ser posicionada")],
-                [sg.Text(f"Embarcação: {embarcacao.nome}")],
-                [sg.Text(f"Tamanho: {embarcacao.vida}")],
-                [sg.Text("Coordenada Inicial"), sg.InputText(key='coordenada-inicial', size=(5, 1)), sg.Text("Coordenada Final"), sg.InputText(key='coordenada-final', size=(5, 1))],
-                [sg.Button("OK")]
-            ]
-        print("vai entrar no if")    
+            layout_coordenadas = self.layout_coloca_embarcacoes(nome_embarcacao, tamanho_embarcacao)
         if funcao == 'faz_tiro':
-            layout_coordenadas = [
-                [sg.Text("Digite a coordenada do tiro")],
-                [sg.Text("Coordenada do tiro"), sg.InputText(key='coordenada-tiro', size=(5, 1))],
-                [sg.Button("OK")]
-            ]
+            layout_coordenadas = self.layout_faz_tiro()
 
 
         # Layout geral com duas colunas
@@ -204,31 +209,16 @@ class ControladorJogo:
         # Crie a janela
         window = sg.Window('Batalha Naval', layout)
 
-        while True:
-            event, values = window.read()
+        coordinates = self.get_coordinates(window, funcao)
 
-            if event == sg.WINDOW_CLOSED:
-                window.close()
-                return None
+        if funcao == 'coloca_embarcacoes' and coordinates[0] is not None:
+            coordinates[1] = self.get_coordinates(window, funcao)[0]
 
-            if event == "OK" and funcao == 'coloca_embarcacoes':
-                try:
-                    coordenada_inicial = values['coordenada-inicial']
-                    coordenada_final = values['coordenada-final']
-                    window.close()
-                    return coordenada_inicial, coordenada_final
-                except ValueError:
-                    sg.popup_error("Digite uma coordenada de tiro válida")
+        window.close()
 
-            if event == "OK" and funcao == 'faz_tiro':  
-                print("entra segundo if faz tiro")
-                try:
-                    coordenada_tiro = values['coordenada-tiro']
-                    print("Coordenada do imprimit_tabuleiro: ",coordenada_tiro)
-                    window.close()
-                    return coordenada_tiro
-                except ValueError:
-                    sg.popup_error("Digite uma coordenada de tiro válida")
+        if None not in coordinates:
+            print(f'Coordenadas selecionadas: {coordinates}')
+            return coordinates
 
 
     def mapear_letra_numero(self, valor):
@@ -248,49 +238,36 @@ class ControladorJogo:
     def trata_coordenada(self, tamanho_oceano, oceano_jogador, funcao, embarcacao=None):
         print('Inicia trata coordenada')
         while True:
-            try:
                 if funcao == 'faz_tiro':
                     coordenadas = self.imprimir_tabuleiro_gui(tamanho_oceano, oceano_jogador, funcao)
                     print("Coordenada de trata coordenada:", coordenadas)
                     print(coordenadas)
                     print(len(coordenadas))
-                    if len(coordenadas) < 2 or not coordenadas[1].isdigit() or not coordenadas[0].isalpha():
-                        raise ValueError("Digite uma coordenada válida")
-                    linha = int(coordenadas[1:])
-                    coluna = self.mapear_letra_numero(coordenadas[0])
-                    if 0 <= linha < tamanho_oceano and 0 <= coluna < tamanho_oceano:
-                        print("coordenada trata_coordenada ja tratatada: ",linha, coluna)
-                        return linha, coluna
-                    else:
-                        self.__tela_jogo.mostra_mensagem("Coordenada fora dos limites do tabuleiro. Tente novamente.")
+                    linha = coordenadas[0][0]
+                    print(linha)
+                    coluna = coordenadas[0][1]
+                    print(coluna)
+                    return linha, coluna
                 if funcao == 'coloca_embarcacoes':
-                    coordenadas = self.imprimir_tabuleiro_gui(tamanho_oceano,oceano_jogador, funcao, embarcacao)
-                    coordenada_1, coordenada_2 = coordenadas
-                    if len(coordenada_1) < 2 or not coordenada_1[1:].isdigit() or not coordenada_1[0].isalpha() or \
-                    len(coordenada_2) < 2 or not coordenada_2[1:].isdigit() or not coordenada_2[0].isalpha():
-                        raise ValueError("Digite coordenadas válidas")
-                    linha1 = int(coordenada_1[1:])
-                    coluna1 = self.mapear_letra_numero(coordenada_1[0])
-
-                    linha2 = int(coordenada_2[1:])
-                    coluna2 = self.mapear_letra_numero(coordenada_2[0])
-
-                    if 0 <= linha1 < tamanho_oceano and 0 <= coluna1 < tamanho_oceano and \
-                    0 <= linha2 < tamanho_oceano and 0 <= coluna2 < tamanho_oceano:
-                        return (linha1, coluna1), (linha2, coluna2)
-                    else:
-                        self.__tela_jogo.mostra_mensagem("Coordenadas fora dos limites do tabuleiro. Tente novamente.")
-                else:
-                    raise ValueError("Digite uma ou duas coordenadas válidas")
-            except ValueError as e:
-                self.__tela_jogo.mostra_mensagem(str(e))
+                    tamanho_embarcacao = embarcacao.vida
+                    nome_embarcacao = embarcacao.nome 
+                    coordenada_1, coordenada_2 = self.imprimir_tabuleiro_gui(tamanho_oceano,oceano_jogador, funcao, nome_embarcacao, tamanho_embarcacao)
+                    print(coordenada_1, coordenada_2)
+                    linha1 = coordenada_1[0]
+                    coluna1 = coordenada_1[1]
+                    linha2 = coordenada_2[0]
+                    coluna2 = coordenada_2[1]
+                    print((linha1, coluna1), (linha2, coluna2))
+                    return (linha1, coluna1), (linha2, coluna2)
 
         
 
     def posiciona_embarcacao(self, tamanho_oceano, oceano, embarcacao):
+        print("inicia posiciona embarcação")
         tamanho_embarcacao = embarcacao.vida
         while True:
             (linha_inicial, coluna_inicial), (linha_final, coluna_final) = self.trata_coordenada(tamanho_oceano, oceano, 'coloca_embarcacoes', embarcacao)
+            print(linha_inicial, coluna_inicial, linha_final, coluna_final)
             break
         if (linha_inicial == linha_final and coluna_final - coluna_inicial == tamanho_embarcacao - 1) or \
             (coluna_inicial == coluna_final and linha_final - linha_inicial == tamanho_embarcacao - 1):
@@ -350,7 +327,7 @@ class ControladorJogo:
             tiro_acertou = True
             self.__tela_jogo.mostra_resultado_rodada("Você", "acertou")
             embarcacao.vida -= 1
-            if embarcacao.vida == 0:
+            if embarcacao.vida <= 0:
                 self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
                 self.__pontuacao_partida_jogador += 3
             self.__pontuacao_partida_jogador += 1
@@ -370,23 +347,21 @@ class ControladorJogo:
         self.__tela_jogo.mostra_mensagem("Turno do computador:")
         while True:
             linha, coluna = random.randint(0, tamanho-1), random.randint(0, tamanho-1)
-            if oceano_tiros_computador[linha][coluna] == "~":
-                if oceano_jogador[linha][coluna] != "~":
-                    embarcacao = oceano_jogador[linha][coluna]
-                    self.__tela_jogo.mostra_resultado_rodada("O computador", "acertou")
-                    embarcacao.vida -= 1
-                    print("tira vida da embaracao", embarcacao.vida)
-                    tiro_acertou = True
-                    if embarcacao.vida == 0:
-                        self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
-                        self.__pontuacao_partida_computador += 3
-                    self.__pontuacao_partida_computador += 1 
-                else:
-                    oceano_tiros_computador[linha][coluna] = "O"
-                    self.__tela_jogo.mostra_resultado_rodada("O computador", "errou")
-                    tiro_acertou = False
-                oceano_tiros_computador[linha][coluna] = "X" if tiro_acertou else "O"
-                break
+            if oceano_tiros_computador[linha][coluna] != "~":
+                embarcacao = oceano_jogador[linha][coluna]
+                self.__tela_jogo.mostra_resultado_rodada("O computador", "acertou")
+                embarcacao.vida -= 1
+                tiro_acertou = True
+                if embarcacao.vida == 0:
+                    self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
+                    self.__pontuacao_partida_computador += 3
+                self.__pontuacao_partida_computador += 1 
+            else:
+                oceano_tiros_computador[linha][coluna] = "O"
+                self.__tela_jogo.mostra_resultado_rodada("O computador", "errou")
+                tiro_acertou = False
+            oceano_tiros_computador[linha][coluna] = "X" if tiro_acertou else "O"
+            break
 
 
     def todas_embarcacoes_afundadas(self, tabuleiro):
@@ -412,14 +387,16 @@ class ControladorJogo:
     
     
 
-    def partida(self, jogador_logado): 
+    def partida(self, jogador_logado):
+        print("inicia partida")
+        
         tamanho = self.__controlador_sistema.retorna_recebe_tamanho_oceano()
         oceano_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_tiros_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
-        oceano_tiros_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
-        self.imprimir_tabuleiro(tamanho, oceano_jogador.matriz)
+        oceano_tiros_computador = oceano_jogador
         for embarcacao in oceano_jogador.embarcacoes: 
+            print("inicia o for")
             while True:
                 if self.posiciona_embarcacao(tamanho, oceano_jogador.matriz, embarcacao):
                     break
@@ -427,7 +404,6 @@ class ControladorJogo:
 
         while not (self.vencedor_jogador(oceano_tiros_jogador.matriz) or \
                    self.vencedor_computador(oceano_tiros_computador.matriz)):  
-            self.imprimir_tabuleiro(tamanho, oceano_tiros_jogador.matriz) 
             self.imprimir_tabuleiro(tamanho, oceano_computador.matriz) 
             while self.faz_tiro_jogador(tamanho, oceano_tiros_jogador.matriz, oceano_computador.matriz):
                 if self.vencedor_jogador(oceano_tiros_jogador.matriz):

@@ -130,31 +130,114 @@ class TelaJogador:
             if event == sg.WIN_CLOSED:
                 window.close()
                 return 0
-
             if event == 'Fazer Cadastro':
                 window.close()
                 return 1
-
             if event == 'Alterar Cadastro':
                 window.close()
                 return 2
-
             if event == 'Remover Cadastro':
                 window.close()
                 return 3
-
             if event == 'Voltar':
                 window.close()
                 return 0
 
-    def mostra_historico(self):
-        sg.popup('Histórico não disponível.')
+    def opcoes_alteracao(self):
+        sg.theme('DarkBlue')
+        layout = [
+            [sg.Text('------CADASTRO------')],
+            [sg.Text('Selecione a opção desejada')],
+            [sg.Button('Alterar Senha')],
+            [sg.Button('Alterar Nome')],
+            [sg.Button('Alterar Data de Nascimento')],
+            [sg.Button('Voltar')],
+        ]
 
+        window = sg.Window('Alterar Cadastro', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED:
+                window.close()
+                return 0
+            if event == 'Alterar Senha':
+                window.close()
+                return 1
+            if event == 'Alterar Nome':
+                window.close()
+                return 2
+            if event == 'Alterar Data de Nascimento':
+                window.close()
+                return 3
+            if event == 'Voltar':
+                window.close()
+                return 0
+            
+    def recebe_nova_senha(self):
+        layout = [
+            [sg.Text('Digite a nova senha:'), sg.Input(key='-SENHA-')],
+            [sg.Button('OK')],
+        ]
+
+        window = sg.Window('Jogo', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED:
+                window.close()
+                return None
+
+            if event == 'OK':
+                senha = values['-SENHA-']
+                window.close()
+                return senha
+
+    def recebe_novo_nome(self):
+        layout = [
+            [sg.Text('Digite o novo nome:'), sg.Input(key='-NOME-')],
+            [sg.Button('OK')],
+        ]
+
+        window = sg.Window('Jogo', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED:
+                window.close()
+                return None
+
+            if event == 'OK':
+                nome = values['-NOME-']
+                window.close()
+                return nome
+
+    def recebe_nova_data_nascimento(self):
+        layout = [
+            [sg.Text('Digite a nova data de nascimento:'), sg.Input(key='-DATA-DE-NASCIMENTO-')],
+            [sg.Button('OK')],
+        ]
+
+        window = sg.Window('Jogo', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED:
+                window.close()
+                return None
+
+            if event == 'OK':
+                data_de_nascimento = values['-DATA-DE-NASCIMENTO-']
+                window.close()
+                return data_de_nascimento
+   
     def mostra_pontuacao(self):
         sg.popup('Pontuação não disponível.')
 
-    def mostra_lista_jogadores(self):
-        sg.popup('Lista de jogadores não disponível.')
 
     def mostra_mensagem(self, msg):
         sg.popup(msg)
@@ -178,4 +261,21 @@ class TelaJogador:
                 break
         window.close()
 
+    def mostra_lista_jogadores(self, jogadores):
+        layout = [
+            [sg.Table(values=jogadores,
+                      headings=['Nome'],
+                      auto_size_columns=False,
+                      justification='right',
+                      display_row_numbers=False,
+                      num_rows=min(25, len(jogadores)),
+                      key='-TABLE-')],
+            [sg.Button('Fechar')]
+        ]
+        window = sg.Window('Lista jogadores', layout)
+        while True:
+            event, values = window.read()
+            if event == sg.WIN_CLOSED or event == 'Fechar':
+                break
+        window.close()
 
