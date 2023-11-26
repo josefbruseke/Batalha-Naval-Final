@@ -64,7 +64,6 @@ class ControladorJogo:
         try:
             lista_opcoes = {1: self.inicia_partida,
                             2: self.abre_menu_jogo,
-                            3: self.historico_geral,
                             0: self.__controlador_sistema.encerra_sistema}
             opcao_selecionada = self.__tela_jogo.mostra_opcoes_final()
             if opcao_selecionada == 0:
