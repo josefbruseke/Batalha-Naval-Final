@@ -19,21 +19,22 @@ import PySimpleGUI as sg
 
 class TelaOceano:
     def __init__(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
 
     def recebe_tamanho(self):
+        print("inicia tamanho oceano")
         layout = [
-            [sg.Text('-----TAMANHO DO OCEANO-----')],
-            [sg.Text('Informe o tamanho do oceano da partida:'), sg.Input(key='-TAMANHO-')],
-            [sg.Button('OK'), sg.Button('Cancelar')],
+            [sg.Text('Digite o tamanho do oceano:'), sg.Input(key='-TAMANHO-')],
+            [sg.Button('OK')],
         ]
 
-        window = sg.Window('Tamanho do Oceano', layout)
+
+        window = sg.Window('Tamanho do Oceano', layout, auto_size_text=True, auto_size_buttons=True)
 
         while True:
             event, values = window.read()
 
-            if event == sg.WIN_CLOSED or event == 'Cancelar':
+            if event == sg.WIN_CLOSED:
                 window.close()
                 return None
 

@@ -19,8 +19,8 @@ class ControladorJogador:
     def abre_opcoes_cadastro(self):
         try: 
             lista_opcoes = {1: self.cadastra_jogador,
-                            2: self.remove_jogador,
-                            3: self.altera_cadastro,
+                            2: self.altera_cadastro,
+                            3: self.remove_jogador,
                             0: self.__controlador_sistema.abre_opcoes}
             opcao_selecionada = self.__tela_jogador.opcoes_cadastro()
             funcao_escolhida = lista_opcoes[opcao_selecionada]
@@ -32,7 +32,6 @@ class ControladorJogador:
 
     def cadastra_jogador(self):
         dados_jogador = self.__tela_jogador.recebe_cadastro()
-
         try:
             data_nascimento = datetime.datetime.strptime(dados_jogador["data_nascimento"], "%d/%m/%Y")
         except ValueError:
@@ -56,7 +55,8 @@ class ControladorJogador:
             if jogador.nome == nome and jogador.senha == senha:
                 return jogador
         return None
-
+    
+    
     def altera_cadastro(self):
         for jogador in self.jogadores:
             print(jogador.nome, jogador)
@@ -101,6 +101,8 @@ class ControladorJogador:
             self.__controlador_sistema.abre_opcoes()
 
     def historico_jogador(self, jogador):
+        self.__tela_jogo.mostra_historico_(self.jogos)
+        self.abre_menu_jogo(jogador)
         lista_jogos = jogador.jogos
         for jogo in lista_jogos:
             print(jogo.id)
@@ -119,9 +121,11 @@ class ControladorJogador:
         return self.__tela_jogador.mostra_ranking(jogadores_ordenados)
 
     def lista_jogadores(self):
+        lista_jogadores = []
         for jogador in self.jogadores:
-            self.__tela_jogador.mostra_mensagem(f"nome: {jogador.nome}")
-
+            lista_jogadores.append(jogador.nome)
+        return self.__tela_jogador.mostra_lista_jogadores(lista_jogadores)
+    
     def estah_cadastrado(self, nome, senha):
         for jogador in self.jogadores:
             if jogador.nome == nome and jogador.senha == senha: 

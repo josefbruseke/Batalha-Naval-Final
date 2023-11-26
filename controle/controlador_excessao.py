@@ -1,4 +1,9 @@
+import PySimpleGUI as sg
+
 class ControladorExcessao:
+    def mostra_mensagem(self, msg):
+        sg.popup(msg)
+
     def handle_exception(self, exception):
         try:
             # Tratamento específico para diferentes tipos de exceções
@@ -12,11 +17,11 @@ class ControladorExcessao:
     def handle_value_error(self, exception, mensagem):
         # Tratamento para exceções do tipo ValueError
         if isinstance(exception, ValueError):
-            print(f"Erro: {exception}.\n {mensagem}")
+            self.mostra_mensagem(f"Erro: {exception}.\n {mensagem}")
 
     def handle_generic_exception(self, exception):
-        print(f"Erro genérico: {exception}")
+        self.mostra_mensagem(f"Erro genérico: {exception}")
 
     def handle_unexpected_exception(self, exception):
         # Tratamento para exceções não previstas
-        print(f"Erro inesperado: {exception}")
+        self.mostra_mensagem(f"Erro inesperado: {exception}")
