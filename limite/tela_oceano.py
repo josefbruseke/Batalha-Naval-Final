@@ -22,12 +22,10 @@ class TelaOceano:
         sg.theme('DarkAmber')
 
     def recebe_tamanho(self):
-        print("inicia tamanho oceano")
         layout = [
             [sg.Text('Digite o tamanho do oceano:'), sg.Input(key='-TAMANHO-')],
             [sg.Button('OK')],
         ]
-
 
         window = sg.Window('Tamanho do Oceano', layout, auto_size_text=True, auto_size_buttons=True)
 
@@ -39,9 +37,13 @@ class TelaOceano:
                 return None
 
             if event == 'OK':
-                tamanho = int(values['-TAMANHO-'])
-                window.close()
-                return tamanho
+                try:
+                    tamanho = int(values['-TAMANHO-'])
+                    window.close()
+                    return tamanho
+                except ValueError:
+                    sg.popup_error("Digite um número válido para o tamanho do oceano")
+
 
     def mostra_oceano_jogador(self):
         pass
