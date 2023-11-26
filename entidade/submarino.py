@@ -2,7 +2,7 @@ from entidade.embarcacao import Embarcacao
 
 class Submarino(Embarcacao):
     def __init__(self, profundidade: int):
-        super().__init__("Submarino", "S", 2, 2)
+        super().__init__("Submarino", "S", 2, 2, 2)
         self.__profundidade = profundidade
         
     @property 

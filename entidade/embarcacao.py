@@ -2,12 +2,21 @@ from abc import ABC, abstractmethod
 
 class Embarcacao(ABC):
     @abstractmethod
-    def __init__(self, nome, sigla, vida, quantidade):
-        self.nome = nome
-        self.sigla = sigla
-        self.vida = vida  
-        self.quantidade = quantidade
+    def __init__(self, nome, sigla, vida, vida_max, quantidade):
+        self.__nome = nome
+        self.__sigla = sigla
+        self.__vida = vida
+        self.__vida_max = vida_max
+        self.__quantidade = quantidade
      
+
+    @property
+    def sigla(self):
+        return self.__sigla
+    
+    @sigla.setter
+    def sigla(self, sigla: int):
+        self.__sigla = sigla
 
     @property
     def vida(self):
@@ -16,6 +25,15 @@ class Embarcacao(ABC):
     @vida.setter
     def vida(self, vida: int):
         self.__vida = vida
+
+
+    @property
+    def vida_max(self):
+        return self.__vida_max
+    
+    @vida_max.setter
+    def vida_max(self, vida_max: int):
+        self.vida_max = vida_max
     
     @property
     def nome(self):
