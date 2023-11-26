@@ -110,7 +110,7 @@ class ControladorJogo:
         self.partida(jogador_logado)
 
     def imprimir_tabuleiro(self, tamanho, oceano):
-        self.__tela_jogo.mostra_tabuleiro(tamanho, oceano, Embarcacao)
+        print("inicia imprimir tabuleiro")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         layout = []
 
@@ -327,7 +327,7 @@ class ControladorJogo:
             tiro_acertou = True
             self.__tela_jogo.mostra_resultado_rodada("Você", "acertou")
             embarcacao.vida -= 1
-            if embarcacao.vida <= 0:
+            if embarcacao.vida == 0:
                 self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
                 self.__pontuacao_partida_jogador += 3
             self.__pontuacao_partida_jogador += 1
@@ -336,10 +336,6 @@ class ControladorJogo:
             self.__tela_jogo.mostra_resultado_rodada("Você", "não acertou")
 
         oceano_tiros_jogador[linha][coluna] = "X" if tiro_acertou else "O"
-
-        coluna = self.mapear_letra_numero(coluna)
-        linha = str(linha)
-        self.__jogadas.append((linha + coluna, "acertou" if tiro_acertou else "errou"))
 
         return tiro_acertou
     
@@ -385,6 +381,10 @@ class ControladorJogo:
             return True
         return False
     
+    def reinicia_vidas(self, embarcacoes):
+        for embarcacao in embarcacoes:
+            embarcacao.vida = embarcacao.vida_max
+        
     
 
     def partida(self, jogador_logado):
@@ -410,6 +410,8 @@ class ControladorJogo:
                     break
             while self.faz_tiro_computador(tamanho, oceano_jogador.matriz, oceano_tiros_computador.matriz):
                 self.faz_tiro_computador(tamanho, oceano_jogador.matriz, oceano_tiros_computador.matriz)
+        self.reinicia_vidas(oceano_jogador.embarcacoes)
+        self.reinicia_vidas(oceano_computador.embarcacoes)
         self.termina_jogo(jogador_logado)
 
     def termina_jogo(self, jogador_logado):
