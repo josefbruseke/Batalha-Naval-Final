@@ -178,7 +178,6 @@ class TelaJogo:
         # Fechar a janela ao sair do loop
         window.close()
 
-
     def mostra_resultados(self, duracao, vencedor, pontuacao_jogador, pontuacao_computador):
         sg.popup(
             f"------RESULTADOS------\n"
