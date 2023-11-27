@@ -25,22 +25,14 @@ class ControladorJogo:
     def jogos(self):
         return self.__jogo_dao.get_all()
 
-    def faz_login(self):
-        dados_login = self.__tela_jogo.recebe_login()
-        if dados_login == 'Encerrar Sistema':
-            if not self.__controlador_sistema.encerra_sistema():
-                self.faz_login()
-        if dados_login == 'Voltar':
-            self.voltar()       
-        recebe_nome, recebe_senha = dados_login["recebe_nome"], dados_login["recebe_senha"]
-        jogador = self.__controlador_sistema.controlador_jogador.estah_cadastrado(recebe_nome, recebe_senha)
-        if  jogador == None:
-            self.faz_login()
+    def inicia_jogo(self):
+        jogador = self.__controlador_sistema.controlador_jogador.faz_login()
+        if jogador == None:
+            self.inicia_jogo()
+        if jogador == 'Voltar':
+            return self.voltar()
         else:
-            self.inicia_jogo(jogador)
-
-    def inicia_jogo(self, jogador):
-        self.abre_menu_jogo(jogador)
+            self.abre_menu_jogo(jogador)
 
     def voltar(self):
         self.__controlador_sistema.abre_opcoes()
@@ -64,7 +56,7 @@ class ControladorJogo:
             self.__controlador_excessao.handle_value_error(e, mensagem)
             self.abre_menu_jogo(jogador)
     
-    def abre_menu_final(self, jogador):
+    def abre_menu_final(self, jogador=None):
         try:
             lista_opcoes = {1: self.inicia_partida,
                             2: self.abre_menu_jogo,
@@ -91,17 +83,7 @@ class ControladorJogo:
             self.__tela_jogo.mostra_mensagem("O jogador ainda não possui nenhum jogo!")
         self.__tela_jogo.mostra_historico_jogador(lista_jogos_jogador)
         self.abre_menu_jogo(jogador)
-        
 
-    def remover_historico(self):
-        self.historico_geral()
-        id = input("Digite o id: ")
-        self.__jogo_dao.remove(id)
-        print("jogo removido")
-        self.historico_geral()
-        opcao = input("deseja remover de novo? ")
-        if opcao == 'S':
-            self.remover_historico()
 
     def mostrar_data(self):
         data_atual = datetime.now()
@@ -115,8 +97,6 @@ class ControladorJogo:
 
 
     def abre_imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, nome_embarcacao=None, tamanho_embarcacao=None, oceano_tiros_computador=None):
-        print("iniciou abre_imprimir_tabuleiro_gui")
-        print(oceano_tiros_computador)
         classe_embarcacao = Embarcacao
         if funcao == 'faz_tiro':
             layout_computador = self.__tela_jogo.layout_tabuleiro(tamanho, classe_embarcacao, oceano=oceano_tiros_computador)
@@ -130,7 +110,6 @@ class ControladorJogo:
         self.__tela_jogo.imprimir_tabuleiro(tamanho, oceano, embarcacao)
 
     def mapear_letra_numero(self, valor):
-        print("inicia mapear_letra_numero")
         if isinstance(valor, int) and 0 <= valor <= 9:
             alfabeto = {i: chr(65 + i) for i in range(26)}
             if valor in alfabeto:
@@ -144,39 +123,28 @@ class ControladorJogo:
     
     
     def trata_coordenada(self, tamanho_oceano, oceano_jogador, funcao,embarcacao=None, oceano_tiros_computador=None):
-        print('Inicia trata coordenada')
-        print(oceano_tiros_computador)
         while True:
                 if funcao == 'faz_tiro':
                     coordenadas = self.abre_imprimir_tabuleiro_gui(tamanho_oceano, oceano_jogador, funcao, oceano_tiros_computador=oceano_tiros_computador)
-                    print("Coordenada de trata coordenada:", coordenadas)
-                    print(coordenadas)
-                    print(len(coordenadas))
                     linha = coordenadas[0][0]
-                    print(linha)
                     coluna = coordenadas[0][1]
-                    print(coluna)
                     return linha, coluna
                 if funcao == 'coloca_embarcacoes':
                     tamanho_embarcacao = embarcacao.vida
                     nome_embarcacao = embarcacao.nome 
                     coordenada_1, coordenada_2 = self.abre_imprimir_tabuleiro_gui(tamanho_oceano,oceano_jogador, funcao, nome_embarcacao, tamanho_embarcacao)
-                    print(coordenada_1, coordenada_2)
                     linha1 = coordenada_1[0]
                     coluna1 = coordenada_1[1]
                     linha2 = coordenada_2[0]
                     coluna2 = coordenada_2[1]
-                    print((linha1, coluna1), (linha2, coluna2))
                     return (linha1, coluna1), (linha2, coluna2)
 
         
 
     def posiciona_embarcacao(self, tamanho_oceano, oceano, embarcacao):
-        print("inicia posiciona embarcação")
         tamanho_embarcacao = embarcacao.vida
         while True:
             (linha_inicial, coluna_inicial), (linha_final, coluna_final) = self.trata_coordenada(tamanho_oceano, oceano, 'coloca_embarcacoes', embarcacao)
-            print(linha_inicial, coluna_inicial, linha_final, coluna_final)
             break
         if (linha_inicial == linha_final and coluna_final - coluna_inicial == tamanho_embarcacao - 1) or \
             (coluna_inicial == coluna_final and linha_final - linha_inicial == tamanho_embarcacao - 1):
@@ -224,48 +192,45 @@ class ControladorJogo:
                     return True
 
     def faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador, oceano_tiros_computador):
-        print("Faz tiro jogador inicado")
-        print(oceano_tiros_computador)
+        tiro_acertou = False
+        afundou = False
+        nome_embarcacao = None
         linha, coluna = self.trata_coordenada(tamanho_oceano, oceano_tiros_jogador, 'faz_tiro', oceano_tiros_computador=oceano_tiros_computador)
-        print("coordenada de faz tiro jgaodor recebbida de trata_coodernada:", linha, coluna)
         if oceano_tiros_jogador[linha][coluna] == "O" or oceano_tiros_jogador[linha][coluna] == "X":
             self.__tela_jogo.mostra_mensagem("O tiro foi repetido!")
-            self.faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador, oceano_tiros_computador)
-
+            return self.faz_tiro_jogador(tamanho_oceano, oceano_tiros_jogador, oceano_computador, oceano_tiros_computador)
         if oceano_computador[linha][coluna] != "~":
             embarcacao = oceano_computador[linha][coluna]
+            nome_embarcacao = embarcacao.nome 
             tiro_acertou = True
-            self.__tela_jogo.mostra_resultado_rodada("Você", "acertou")
             embarcacao.vida -= 1
-            if embarcacao.vida == 0:
-                self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
-                self.__pontuacao_partida_jogador += 3
             self.__pontuacao_partida_jogador += 1
-        else:
-            tiro_acertou = False
-            self.__tela_jogo.mostra_resultado_rodada("Você", "não acertou")
-
+            afundou = False
+            if embarcacao.vida == 0:
+                self.__pontuacao_partida_jogador += 3
+                afundou = True
+        self.__tela_jogo.mostra_resultado_rodada("Jogador", tiro_acertou, afundou, nome_embarcacao=nome_embarcacao)
         oceano_tiros_jogador[linha][coluna] = "X" if tiro_acertou else "O"
-
         return tiro_acertou
     
     def faz_tiro_computador(self, tamanho, oceano_jogador, oceano_tiros_computador):
+        tiro_acertou = False
+        afundou = False
+        nome_embarcacao = None
         self.__tela_jogo.mostra_mensagem("Turno do computador:")
         while True:
             linha, coluna = random.randint(0, tamanho-1), random.randint(0, tamanho-1)
             if oceano_tiros_computador[linha][coluna] != "~":
                 embarcacao = oceano_jogador[linha][coluna]
-                self.__tela_jogo.mostra_resultado_rodada("O computador", "acertou")
+                nome_embarcacao = embarcacao.nome
                 embarcacao.vida -= 1
                 tiro_acertou = True
+                self.__pontuacao_partida_computador += 1
+                afundou = False
                 if embarcacao.vida == 0:
-                    self.__tela_jogo.mostra_mensagem(f"{embarcacao.nome} afundou!")
                     self.__pontuacao_partida_computador += 3
-                self.__pontuacao_partida_computador += 1 
-            else:
-                oceano_tiros_computador[linha][coluna] = "O"
-                self.__tela_jogo.mostra_resultado_rodada("O computador", "errou")
-                tiro_acertou = False
+                    afundou = True
+            self.__tela_jogo.mostra_resultado_rodada("O computador", tiro_acertou, afundou, nome_embarcacao)
             oceano_tiros_computador[linha][coluna] = "X" if tiro_acertou else "O"
             break
 
@@ -298,15 +263,12 @@ class ControladorJogo:
     
 
     def partida(self, jogador_logado):
-        print("inicia partida")
-        
         tamanho = self.__controlador_sistema.retorna_recebe_tamanho_oceano()
         oceano_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_computador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_tiros_jogador = self.__controlador_sistema.retorna_cria_oceano(tamanho)
         oceano_tiros_computador = oceano_jogador
         for embarcacao in oceano_jogador.embarcacoes: 
-            print("inicia o for")
             while True:
                 if self.posiciona_embarcacao(tamanho, oceano_jogador.matriz, embarcacao):
                     break
