@@ -33,9 +33,8 @@ class ControladorJogo:
         if dados_login == 'Voltar':
             self.voltar()       
         recebe_nome, recebe_senha = dados_login["recebe_nome"], dados_login["recebe_senha"]
-        jogador = self.__controlador_sistema.retorna_estah_cadastrado(recebe_nome, recebe_senha)
-        if jogador == False or jogador == None:
-            self.__tela_jogo.mostra_mensagem("Jogador não encontrado!")
+        jogador = self.__controlador_sistema.controlador_jogador.estah_cadastrado(recebe_nome, recebe_senha)
+        if  jogador == None:
             self.faz_login()
         else:
             self.inicia_jogo(jogador)
