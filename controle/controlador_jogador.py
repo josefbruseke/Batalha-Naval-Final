@@ -58,18 +58,27 @@ class ControladorJogador:
                 else:
                     self.__tela_jogador.mostra_mensagem("Senha Incorreta!")
                     return None
-    
         self.__tela_jogador.mostra_mensagem(f"O jogador {nome} não está cadastrado!") 
         return None
+    
+    def faz_login(self):
+        dados_login = self.__tela_jogador.abre_login()
+        if dados_login == 'Encerrar Sistema':
+            if not self.__controlador_sistema.encerra_sistema():
+                self.faz_login()
+        if dados_login == 'Voltar':
+            return 'Voltar'      
+        recebe_nome, recebe_senha = dados_login["recebe_nome"], dados_login["recebe_senha"]
+        jogador = self.estah_cadastrado(recebe_nome, recebe_senha)
+        return jogador
 
     
     
     def altera_cadastro(self):
         self.lista_jogadores()
-        dados = self.__tela_jogador.seleciona_jogador()
-        nome = dados['nome']
-        senha = dados['senha']
-        jogador = self.estah_cadastrado(nome, senha)
+        jogador = self.faz_login()
+        if jogador == "Voltar":
+            return self.abre_opcoes_cadastro()
         if jogador is not(None):
             opcao = self.__tela_jogador.opcoes_alteracao()
             if opcao == 1:  # Alterar senha
@@ -86,7 +95,8 @@ class ControladorJogador:
                     jogador.data_nascimento = datetime.datetime.strptime(nova_data_nascimento, "%d/%m/%Y")
                     self.__tela_jogador.mostra_mensagem("Data de nascimento alterada com sucesso!")
                 except ValueError:
-                    self.__tela_jogador.mostra_mensagem("Formato de data de nascimento inválido. Alteração cancelada.")
+                    self.__tela_jogador.mostra_mensagem("Formato de data de nascimento inválido.")
+                    self.altera_cadastro()
             else:
                 self.__tela_jogador.mostra_mensagem("Opção inválida. Alteração cancelada.")   
             self.__controlador_sistema.abre_opcoes()
