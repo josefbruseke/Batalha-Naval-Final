@@ -29,7 +29,6 @@ class ControladorOceano:
         while True:
             try:
                 tamanho = self.__tela_oceano.recebe_tamanho()
-                print(tamanho)
                 if tamanho is not None and 6 <= tamanho <= 26:
                     return tamanho
                 else:
