@@ -50,18 +50,26 @@ class ControladorJogador:
         self.__tela_jogador.mostra_mensagem("\nCadastro realizado com sucesso!")
         self.__tela_jogador.mostra_mensagem("Faça Login para jogar! \n")
         
-    def pega_jogador_por_nome_e_senha(self, nome: str, senha: str):
+    def estah_cadastrado(self, nome, senha):
         for jogador in self.jogadores:
-            if jogador.nome == nome and jogador.senha == senha:
-                return jogador
+            if jogador.nome == nome:
+                if jogador.senha == senha:
+                    return jogador
+                else:
+                    self.__tela_jogador.mostra_mensagem("Senha Incorreta!")
+                    return None
+    
+        self.__tela_jogador.mostra_mensagem(f"O jogador {nome} não está cadastrado!") 
         return None
+
     
     
     def altera_cadastro(self):
-        for jogador in self.jogadores:
-            print(jogador.nome, jogador)
+        self.lista_jogadores()
         dados = self.__tela_jogador.seleciona_jogador()
-        jogador = self.pega_jogador_por_nome_e_senha(dados["nome"], dados["senha"])
+        nome = dados['nome']
+        senha = dados['senha']
+        jogador = self.estah_cadastrado(nome, senha)
         if jogador is not(None):
             opcao = self.__tela_jogador.opcoes_alteracao()
             if opcao == 1:  # Alterar senha
@@ -81,32 +89,20 @@ class ControladorJogador:
                     self.__tela_jogador.mostra_mensagem("Formato de data de nascimento inválido. Alteração cancelada.")
             else:
                 self.__tela_jogador.mostra_mensagem("Opção inválida. Alteração cancelada.")   
-            self.atualiza_jogador(jogador)
             self.__controlador_sistema.abre_opcoes()
         else:
-            self.__tela_jogador.mostra_mensagem("Jogador não encontrado!")
-            self.__controlador_sistema.abre_opcoes()
+            self.altera_cadastro()
 
     def remove_jogador(self):
         self.lista_jogadores()
-        dados = self.__tela_jogador.seleciona_jogador()
-        jogador = self.pega_jogador_por_nome_e_senha(dados["nome"], dados["senha"])
+        jogador = self.estah_cadastrado()
         if jogador is not(None):
             self.__jogador_dao.remove(jogador)
             self.__tela_jogador.mostra_mensagem("Jogador removido!")
             self.lista_jogadores()
             self.__controlador_sistema.abre_opcoes()
         else:
-            self.__tela_jogador.mostra_mensagem("Jogador não encontrado!")
-            self.__controlador_sistema.abre_opcoes()
-
-    def historico_jogador(self, jogador):
-        self.__tela_jogo.mostra_historico_(self.jogos)
-        self.abre_menu_jogo(jogador)
-        lista_jogos = jogador.jogos
-        for jogo in lista_jogos:
-            print(jogo.id)
-
+            self.remove_jogador()
 
     def atualiza_jogador(self, jogador):
         self.__jogador_dao.add(jogador)
@@ -126,8 +122,3 @@ class ControladorJogador:
             lista_jogadores.append(jogador.nome)
         return self.__tela_jogador.mostra_lista_jogadores(lista_jogadores)
     
-    def estah_cadastrado(self, nome, senha):
-        for jogador in self.jogadores:
-            if jogador.nome == nome and jogador.senha == senha: 
-                return jogador
-        return False
