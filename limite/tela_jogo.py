@@ -137,9 +137,9 @@ class TelaJogo:
         layout = [
             [sg.Text('------------------------------')],
             [sg.Text('Selecione a sua opção final:')],
-            [sg.Button('Iniciar Novo Jogo')],
-            [sg.Button('Voltar para o Menu Jogo')],
-            [sg.Button('Encerrar o Sistema')],
+            [sg.Button('Iniciar Novo Jogo', size=(20, 2))],
+            [sg.Button('Voltar para o Menu Jogo', size=(20, 2))],
+            [sg.Button('Encerrar o Sistema', size=(20, 2))],
         ]
 
         window = sg.Window('Opções Finais', layout, size=(600, 400), auto_size_text=True, auto_size_buttons=True, element_justification='center')
