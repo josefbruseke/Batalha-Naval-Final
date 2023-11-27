@@ -27,36 +27,40 @@ class TelaJogador:
                 window.close()
                 return {"nome": nome, "data_nascimento": data_nascimento, "senha": senha}
 
-    def seleciona_jogador(self):
+    def abre_login(self):
         sg.theme('DarkAmber')
         layout = [
-            [sg.Text('SELECIONA JOGADOR')],
-            [sg.Text('Digite o nome do Jogador:'), sg.Input(key='-NOME-')],
-            [sg.Text('Digite a senha:'), sg.Input(key='-SENHA-', password_char='*')],
-            [sg.Button('Selecionar Jogador')],
+            [sg.Text('LOGIN')],
+            [sg.Text('Digite seu nome: '), sg.Input(key='-NOME-')],
+            [sg.Text('Digite sua senha:'), sg.Input(key='-SENHA-', password_char='*')],
+            [sg.Button('Entrar'), sg.Button('Voltar')],
         ]
 
-        window = sg.Window('Selecionar Jogador', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
+        window = sg.Window('Login', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
 
             if event == sg.WIN_CLOSED:
+                return 'Encerrar Sistema'
+            
+            elif event == 'Voltar':
                 window.close()
-                return None
+                return 'Voltar'
 
-            if event == 'Selecionar Jogador':
+            if event == 'Entrar':
                 nome = values['-NOME-']
                 senha = values['-SENHA-']
                 window.close()
-                return {"nome": nome, "senha": senha}
+                return {"recebe_nome": nome, "recebe_senha": senha}
+            
 
     def opcoes_cadastro(self):
         sg.theme('DarkAmber')
         layout = [
             [sg.Text('CADASTRO')],
             [sg.Text('Selecione a opção desejada')],
-            [sg.Button('Fazer Cadastro', size=(20, 2))],
+            [sg.Button('Fazer Cadastro'  , size=(20, 2))],
             [sg.Button('Alterar Cadastro', size=(20, 2))],
             [sg.Button('Remover Cadastro', size=(20, 2))],
             [sg.Button('Voltar', size=(20, 2))],
@@ -121,7 +125,8 @@ class TelaJogador:
             [sg.Button('OK')],
         ]
 
-        window = sg.Window('Jogo', layout)
+        window = sg.Window('Jogo', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
+
 
         while True:
             event, values = window.read()
@@ -157,11 +162,11 @@ class TelaJogador:
 
     def recebe_nova_data_nascimento(self):
         layout = [
-            [sg.Text('Digite a nova data de nascimento:'), sg.Input(key='-DATA-DE-NASCIMENTO-')],
+            [sg.Text('Digite a nova data de nascimento: (DD/MM/AAAA)'), sg.Input(key='-DATA-DE-NASCIMENTO-')],
             [sg.Button('OK')],
         ]
 
-        window = sg.Window('Jogo', layout)
+        window = sg.Window('Jogo', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         while True:
             event, values = window.read()
