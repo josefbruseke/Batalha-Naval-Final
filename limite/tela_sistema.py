@@ -1,27 +1,12 @@
-"""class TelaSistema:
-    def mostra_opcoes(self):
-        print("------MENU INICIAL------")
-        print("Selecione a opção desejada")
-        print("1 - Login")
-        print("2 - Cadastro")
-        print("3 - Ranking")
-        print("0 - Encerrar o sistema")
-        opcao = int(input("Escolha a opção: "))
-        return opcao
-
-    def mostra_mensagem(self, msg):
-        print(msg)
-        
-"""
-
 import PySimpleGUI as sg
 
 class TelaSistema:
-    def mostra_opcoes(self):
-        sg.theme('DarkAmber')
+    def __init__(self) -> None:
+        sg.theme("DarkAmber")
 
+    def mostra_opcoes(self):
         layout = [
-            [sg.Text('------MENU INICIAL------')],
+            [sg.Text('MENU INICIAL')],
             [sg.Text('Selecione a opção desejada')],
             [sg.Button('Login', key='1', size=(20, 2))],
             [sg.Button('Cadastro', key='2', size=(20, 2))],
@@ -34,12 +19,30 @@ class TelaSistema:
         while True:
             event, values = window.read()
 
-            if event == sg.WIN_CLOSED:
-                break
+            if event == sg.WIN_CLOSED or event == '0':
+                return 0
 
-            if event in ['1', '2', '3', '0']:
+            if event in ['1', '2', '3']:
                 window.close()
                 return int(event)
 
-        window.close()
+    def confirma_encerramento(self):
+        layout = [
+            [sg.Text('Deseja realmente encerrar o sistema?')],
+            [sg.Button('Sim'), sg.Button('Não')]
+        ]
+
+        window = sg.Window('Confirmação', layout)
+
+        while True:
+            event, values = window.read()
+
+            if event == sg.WIN_CLOSED or event == 'Não':
+                window.close()
+                return False
+
+            if event == 'Sim':
+                window.close()
+                return True
+
 
