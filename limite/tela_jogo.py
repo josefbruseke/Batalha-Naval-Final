@@ -1,38 +1,25 @@
 import PySimpleGUI as sg
 
 class TelaJogo:
-    def recebe_login(self):
+    def mostra_resultado_rodada(self, jogador, tiro_acertou, afundou, nome_embarcacao=None):
         sg.theme('DarkAmber')
-        layout = [
-            [sg.Text('LOGIN')],
-            [sg.Text('Digite seu nome:'), sg.Input(key='-NOME-')],
-            [sg.Text('Digite sua senha:'), sg.Input(key='-SENHA-', password_char='*')],
-            [sg.Button('Login'), sg.Button('Voltar')],
-        ]
 
-        window = sg.Window('Login', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
+        layout = [[sg.Text(f'Resultados da rodada: {jogador}')],
+                  [sg.Text(f'O tiro {"acertou" if tiro_acertou else "não acertou"}')],
+                  [sg.Text(f'A embarcação {nome_embarcacao} foi afundada!') if afundou and nome_embarcacao else sg.Text('')],
+                  [sg.Button('Fechar')]
+                  ]
+
+        window = sg.Window('Resultado da Rodada', layout, finalize=True)
 
         while True:
             event, values = window.read()
 
-            if event == sg.WIN_CLOSED:
-                return 'Encerrar Sistema'
-            
-            elif event == 'Voltar':
-                window.close()
-                return 'Voltar'
+            if event == sg.WINDOW_CLOSED or event == 'Fechar':
+                break
+        window.close()
 
-            if event == 'Login':
-                nome = values['-NOME-']
-                senha = values['-SENHA-']
-                window.close()
-                return {"recebe_nome": nome, "recebe_senha": senha}
 
-    def mostra_resultado_jogo(self):
-        pass
-
-    def mostra_resultado_rodada(self, jogador, resultado):
-        sg.popup(f"{jogador} {resultado} o tiro")
 
     def mostra_opcoes(self):
         sg.theme('DarkAmber')
@@ -135,7 +122,6 @@ class TelaJogo:
     def mostra_opcoes_final(self):
         sg.theme('DarkAmber')
         layout = [
-            [sg.Text('------------------------------')],
             [sg.Text('Selecione a sua opção final:')],
             [sg.Button('Iniciar Novo Jogo', size=(20, 2))],
             [sg.Button('Voltar para o Menu Jogo', size=(20, 2))],
@@ -171,7 +157,6 @@ class TelaJogo:
         return opcao
     
     def imprimir_tabuleiro(self, tamanho, oceano, embarcacao):
-        print("inicia imprimir tabuleiro")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         layout = []
 
@@ -203,12 +188,11 @@ class TelaJogo:
             window.close()
 
     def layout_tabuleiro(self, tamanho, classe_embarcacao, oceano):
-        print("inicou layout_tabuleiro")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         layout_tabuleiro = []
 
         # Adiciona a linha de letras (coordenadas das colunas)
-        header = [sg.Text("", size=(2, 1))] + [sg.Text(letra, size=(3, 1), justification='center') for letra in letras[:tamanho]]
+        header = [sg.Text("", size=(2, 1))] + [sg.Text(letra, size=(3, 1), justification='left') for letra in letras[:tamanho]]
         layout_tabuleiro.append(header)
 
         for i in range(tamanho):
@@ -223,14 +207,11 @@ class TelaJogo:
 
             layout_tabuleiro.append(linha_layout)
         
-        print("criou tabuleiro básico")
-        print("finaizlou layou tabuelrio")
         return layout_tabuleiro
 
 
 
     def imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao=None, tamanho_embarcacao=None, layout_computador=None):
-        print("TELA: iniciou imprimir tabuleiro_gui")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         layout_tabuleiro = []
 
@@ -239,7 +220,7 @@ class TelaJogo:
         layout_tabuleiro.append(header)
 
         for i in range(tamanho):
-            linha_layout = [sg.Text(str(i), size=(2, 1))]
+            linha_layout = [sg.Text(str(i) + ' ', pad=(0, 0), justification='center'), ]
 
             for j in range(tamanho):
                 posicao = oceano[i][j]
@@ -249,37 +230,26 @@ class TelaJogo:
                 linha_layout.append(button)
 
             layout_tabuleiro.append(linha_layout)
-        
-        print("criou tabuleiro básico")
 
         # Layout das coordenadas
-        if funcao == 'coloca_embarcacoes':
-            layout_coordenadas = [
-                [sg.Text(f"Selecione as coordenadas da embarcação a ser posicionada")],
-                [sg.Text(f"Embarcação: {nome_embarcacao}")],
-                [sg.Text(f"Tamanho: {tamanho_embarcacao}")],
-            ]
-        if funcao == 'faz_tiro':
-            layout_coordenadas = [
-                [sg.Text("Selecione a coordenada do tiro")],
-            ]
-
-        # Layout geral com duas colunas
+        tamanho_fonte = ('Helvetica', 12)
 
         if funcao == 'coloca_embarcacoes':
             layout = [
-                [sg.Column(layout_tabuleiro), sg.Column(layout_coordenadas)],
-                ] 
+                [sg.Column(layout_tabuleiro)],
+                [sg.Text(f"Selecione as coordenadas da embarcação a ser posicionada", font=tamanho_fonte)],
+                [sg.Text(f"Embarcação: {nome_embarcacao}", font=tamanho_fonte)],
+                [sg.Text(f"Tamanho: {tamanho_embarcacao}", font=tamanho_fonte)],
+            ]
 
         if funcao == 'faz_tiro': 
             layout = [
-            [sg.Column(layout_tabuleiro), sg.Column(layout_computador), sg.Column(layout_coordenadas)],
+                [sg.Text("Oceano do Adversário                                            Seu Oceano", font=tamanho_fonte, justification='center') ],
+                [sg.Column(layout_tabuleiro), sg.Column(layout_computador)],
+                [sg.Text("Selecione a coordenada do tiro", font=tamanho_fonte)],
             ]
-
-        print("Criou layout")
         # Crie a janela
-        window = sg.Window('Batalha Naval', layout)
-        print("criou a window")
+        window = sg.Window('Batalha Naval', layout, auto_size_text=True, auto_size_buttons=True, element_justification='center')
 
         coordinates = self.get_coordinates(window, funcao)
 
@@ -289,12 +259,10 @@ class TelaJogo:
         window.close()
 
         if None not in coordinates:
-            print(f'Coordenadas selecionadas: {coordinates}')
             return coordinates
       
 
     def get_coordinates(self, window, funcao):
-        print("inicia get_coodinates")
         event, values = window.read()
         if event == sg.WINDOW_CLOSED:
             return None
