@@ -114,10 +114,15 @@ class ControladorJogo:
         self.partida(jogador_logado)
 
 
-    def abre_imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, nome_embarcacao=None, tamanho_embarcacao=None):
+    def abre_imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, nome_embarcacao=None, tamanho_embarcacao=None, oceano_tiros_computador=None):
         print("iniciou abre_imprimir_tabuleiro_gui")
+        print(oceano_tiros_computador)
         classe_embarcacao = Embarcacao
-        coordendas = self.__tela_jogo.imprimir_tabuleiro_gui(tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao, tamanho_embarcacao)
+        if funcao == 'faz_tiro':
+            layout_computador = self.__tela_jogo.layout_tabuleiro(tamanho, classe_embarcacao, oceano=oceano_tiros_computador)
+            coordendas = self.__tela_jogo.imprimir_tabuleiro_gui(tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao, tamanho_embarcacao, layout_computador)
+        else:
+            coordendas = self.__tela_jogo.imprimir_tabuleiro_gui(tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao, tamanho_embarcacao)
         return coordendas
 
     def abre_imprimir_tabuleiro(self, tamanho, oceano):
@@ -138,11 +143,12 @@ class ControladorJogo:
         return None
     
     
-    def trata_coordenada(self, tamanho_oceano, oceano_jogador, funcao, embarcacao=None):
+    def trata_coordenada(self, tamanho_oceano, oceano_jogador, funcao,embarcacao=None, oceano_tiros_computador=None):
         print('Inicia trata coordenada')
+        print(oceano_tiros_computador)
         while True:
                 if funcao == 'faz_tiro':
-                    coordenadas = self.abre_imprimir_tabuleiro_gui(tamanho_oceano, oceano_jogador, funcao)
+                    coordenadas = self.abre_imprimir_tabuleiro_gui(tamanho_oceano, oceano_jogador, funcao, oceano_tiros_computador=oceano_tiros_computador)
                     print("Coordenada de trata coordenada:", coordenadas)
                     print(coordenadas)
                     print(len(coordenadas))
@@ -217,13 +223,14 @@ class ControladorJogo:
                             oceano[linha][coluna] = embarcacao 
                     return True
 
-    def faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador):
+    def faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador, oceano_tiros_computador):
         print("Faz tiro jogador inicado")
-        linha, coluna = self.trata_coordenada(tamanho_oceano, oceano_tiros_jogador, 'faz_tiro')
+        print(oceano_tiros_computador)
+        linha, coluna = self.trata_coordenada(tamanho_oceano, oceano_tiros_jogador, 'faz_tiro', oceano_tiros_computador=oceano_tiros_computador)
         print("coordenada de faz tiro jgaodor recebbida de trata_coodernada:", linha, coluna)
         if oceano_tiros_jogador[linha][coluna] == "O" or oceano_tiros_jogador[linha][coluna] == "X":
             self.__tela_jogo.mostra_mensagem("O tiro foi repetido!")
-            self.faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador)
+            self.faz_tiro_jogador(self, tamanho_oceano, oceano_tiros_jogador, oceano_computador, oceano_tiros_computador)
 
         if oceano_computador[linha][coluna] != "~":
             embarcacao = oceano_computador[linha][coluna]
@@ -308,11 +315,12 @@ class ControladorJogo:
         while not (self.vencedor_jogador(oceano_tiros_jogador.matriz) or \
                    self.vencedor_computador(oceano_tiros_computador.matriz)):  
             self.abre_imprimir_tabuleiro(tamanho, oceano_computador.matriz) 
-            while self.faz_tiro_jogador(tamanho, oceano_tiros_jogador.matriz, oceano_computador.matriz):
+            while self.faz_tiro_jogador(tamanho, oceano_tiros_jogador.matriz, oceano_computador.matriz, oceano_tiros_computador.matriz):
                 if self.vencedor_jogador(oceano_tiros_jogador.matriz):
                     break
             while self.faz_tiro_computador(tamanho, oceano_jogador.matriz, oceano_tiros_computador.matriz):
-                self.faz_tiro_computador(tamanho, oceano_jogador.matriz, oceano_tiros_computador.matriz)
+                if self.vencedor_computador(oceano_tiros_computador.matriz):
+                    break
         self.reinicia_vidas(oceano_jogador.embarcacoes)
         self.reinicia_vidas(oceano_computador.embarcacoes)
         self.termina_jogo(jogador_logado)

@@ -203,12 +203,13 @@ class TelaJogo:
         if event == "Continuar":
             window.close()
 
-    def layout_tabuleiro(self, tamanho, oceano, embarcacao):
+    def layout_tabuleiro(self, tamanho, classe_embarcacao, oceano):
+        print("inicou layout_tabuleiro")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         layout_tabuleiro = []
 
         # Adiciona a linha de letras (coordenadas das colunas)
-        header = [sg.Text(" ", size=(2, 1))] + [sg.Text(letra, size=(3, 1), justification='center') for letra in letras[:tamanho]]
+        header = [sg.Text("", size=(2, 1))] + [sg.Text(letra, size=(3, 1), justification='center') for letra in letras[:tamanho]]
         layout_tabuleiro.append(header)
 
         for i in range(tamanho):
@@ -218,16 +219,18 @@ class TelaJogo:
                 posicao = oceano[i][j]
 
                 # Cria um botão para cada posição
-                button = sg.Button(posicao.sigla if isinstance(posicao, embarcacao) else posicao, size=(3, 1), key=(i, j))
+                button = sg.Text(posicao.sigla if isinstance(posicao, classe_embarcacao) else posicao, size=(3, 1), key=(i, j))
                 linha_layout.append(button)
 
             layout_tabuleiro.append(linha_layout)
-
+        
+        print("criou tabuleiro básico")
+        print("finaizlou layou tabuelrio")
         return layout_tabuleiro
 
 
 
-    def imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao=None, tamanho_embarcacao=None):
+    def imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao=None, tamanho_embarcacao=None, layout_computador=None):
         print("TELA: iniciou imprimir tabuleiro_gui")
         letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         layout_tabuleiro = []
@@ -263,9 +266,16 @@ class TelaJogo:
             ]
 
         # Layout geral com duas colunas
-        layout = [
-            [sg.Column(layout_tabuleiro), sg.Column(layout_coordenadas)],
-        ]
+
+        if funcao == 'coloca_embarcacoes':
+            layout = [
+                [sg.Column(layout_tabuleiro), sg.Column(layout_coordenadas)],
+                ] 
+
+        if funcao == 'faz_tiro': 
+            layout = [
+            [sg.Column(layout_tabuleiro), sg.Column(layout_computador), sg.Column(layout_coordenadas)],
+            ]
 
         print("Criou layout")
         # Crie a janela
