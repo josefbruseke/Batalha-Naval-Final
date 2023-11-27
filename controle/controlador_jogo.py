@@ -148,7 +148,7 @@ class ControladorJogo:
         layout_tabuleiro = []
 
         # Adiciona a linha de letras
-        layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
+        layout_tabuleiro.append([sg.Text("                  " + "                      ".join(letras[:tamanho]))])
 
         for i in range(tamanho):
             linha_layout = [sg.Text("{:2} ".format(i))]
@@ -161,7 +161,7 @@ class ControladorJogo:
                 linha_layout.append(button)
             layout_tabuleiro.append(linha_layout)
 
-        layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
+        layout_tabuleiro.append([sg.Text("                  " + "                      ".join(letras[:tamanho]))])
         return layout_tabuleiro
     
     def layout_coloca_embarcacoes(self, nome, tamanho):
