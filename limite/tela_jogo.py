@@ -176,7 +176,7 @@ class TelaJogo:
         layout = []
 
         # Cabeçalho das colunas
-        layout.append([sg.Text("   " + " ".join(letras[:tamanho]))])
+        layout.append([sg.Text("       " + "     ".join(letras[:tamanho]))])
 
         for i, linha in enumerate(oceano):
             # Número da linha
@@ -191,7 +191,7 @@ class TelaJogo:
             layout.append(linha_layout)
 
         # Letras das colunas no final
-        layout.append([sg.Text("  " + "  ".join(letras[:tamanho]))])
+        layout.append([sg.Text("       " + "     ".join(letras[:tamanho]))])
 
         # Adicione um botão "Continuar"
         layout.append([sg.Button("Continuar")])
@@ -232,7 +232,7 @@ class TelaJogo:
         layout_tabuleiro = []
 
         # Adiciona a linha de letras (coordenadas das colunas)
-        header = [sg.Text(" ", size=(2, 1))] + [sg.Text(letra, size=(3, 1), justification='center') for letra in letras[:tamanho]]
+        header = [sg.Text("  ", size=(2, 1))] + [sg.Text(letra, size=(3, 1), justification='center') for letra in letras[:tamanho]]
         layout_tabuleiro.append(header)
 
         for i in range(tamanho):
