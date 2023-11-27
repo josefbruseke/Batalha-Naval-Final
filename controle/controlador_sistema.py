@@ -56,18 +56,20 @@ class ControladorSistema:
         self.abre_opcoes()
 
     def abre_opcoes(self):
-        try: 
-            lista_opcoes = {1: self.inicia_login, 
-                            2: self.inicia_cadastro,
-                            3: self.ver_ranking,
-                            0: self.encerra_sistema}
-            opcao_selecionada = self.__tela_sistema.mostra_opcoes()
-            funcao_escolhida = lista_opcoes[opcao_selecionada]
-            funcao_escolhida()
-        except Exception as e:
-            mensagem = "Digite um número entre 0-2, coforme a opção desejada"
-            self.__controlador_excessao.handle_value_error(e, mensagem)
+        lista_opcoes = {1: self.inicia_login, 
+                        2: self.inicia_cadastro,
+                        3: self.ver_ranking,
+                        0: self.encerra_sistema_menu_inicial}
+        opcao_selecionada = self.__tela_sistema.mostra_opcoes()
+        funcao_escolhida = lista_opcoes[opcao_selecionada]
+        funcao_escolhida()
+
+    def encerra_sistema_menu_inicial(self):
+        if self.encerra_sistema() == False:
             self.abre_opcoes()
 
     def encerra_sistema(self):
-        exit(0)
+        if self.__tela_sistema.confirma_encerramento():
+            exit(0)
+        return False
+
