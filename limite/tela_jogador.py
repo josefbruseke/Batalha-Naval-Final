@@ -144,17 +144,17 @@ class TelaJogador:
                 return 0
 
     def opcoes_alteracao(self):
-        sg.theme('DarkBlue')
+        sg.theme('DarkAmber')
         layout = [
             [sg.Text('------CADASTRO------')],
-            [sg.Text('Selecione a opção desejada')],
-            [sg.Button('Alterar Senha')],
-            [sg.Button('Alterar Nome')],
-            [sg.Button('Alterar Data de Nascimento')],
-            [sg.Button('Voltar')],
+            [sg.Text('Selecione a opção desejada', size=(20, 2))],
+            [sg.Button('Alterar Senha', size=(20, 2))],
+            [sg.Button('Alterar Nome', size=(20, 2))],
+            [sg.Button('Alterar Data de Nascimento', size=(20, 2))],
+            [sg.Button('Voltar', size=(20, 2))],
         ]
 
-        window = sg.Window('Alterar Cadastro', layout)
+        window = sg.Window('Alterar Cadastro', layout, element_justification='center')
 
         while True:
             event, values = window.read()
