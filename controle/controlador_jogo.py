@@ -113,85 +113,6 @@ class ControladorJogo:
         self.__tela_jogo.mostra_mensagem("Partida iniciada!")
         self.partida(jogador_logado)
 
-    def imprimir_tabuleiro(self, tamanho, oceano):
-        print("inicia imprimir tabuleiro")
-        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        layout = []
-
-        # Cabeçalho das colunas
-        layout.append([sg.Text("   " + " ".join(letras[:tamanho]))])
-
-        for i, linha in enumerate(oceano):
-            # Número da linha
-            linha_layout = [sg.Text("{:2} ".format(i))]
-            
-            for posicao in linha:
-                if isinstance(posicao, Embarcacao):
-                    linha_layout.append(sg.Text(posicao.sigla, size=(2, 1)))
-                else:
-                    linha_layout.append(sg.Text(posicao, size=(2, 1)))
-
-            layout.append(linha_layout)
-
-        # Letras das colunas no final
-        layout.append([sg.Text("  " + "  ".join(letras[:tamanho]))])
-
-        # Adicione um botão "Continuar"
-        layout.append([sg.Button("Continuar")])
-
-        # Crie a janela
-        window = sg.Window('Tabuleiro', layout)
-        event, values = window.read()
-        # Se o botão "Continuar" for pressionado, feche a janela
-        if event == "Continuar":
-            window.close()
-
-    def layout_tabuleiro(self, tamanho, oceano):
-        print("imprimir_tabuleiro")
-        letras = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        layout_tabuleiro = []
-
-        # Adiciona a linha de letras
-        layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
-
-        for i in range(tamanho):
-            linha_layout = [sg.Text("{:2} ".format(i))]
-
-            for j in range(tamanho):
-                posicao = oceano[i][j]
-
-                # Crie um botão para cada posição
-                button = sg.Button(posicao.sigla if isinstance(posicao, Embarcacao) else posicao, size=(10, 2), key=(i, j))
-                linha_layout.append(button)
-            layout_tabuleiro.append(linha_layout)
-
-        layout_tabuleiro.append([sg.Text("      " + "     ".join(letras[:tamanho]))])
-        return layout_tabuleiro
-    
-    def layout_coloca_embarcacoes(self, nome, tamanho):
-        print("inicia layout coloca_embarcacoes")
-        layout = [
-                [sg.Text(f"Digite as coordenadas da embarcação a ser posicionada")],
-                [sg.Text(f"Embarcação: {nome}")],
-                [sg.Text(f"Tamanho: {tamanho}")],
-                [sg.Text("Coordenada Inicial"), sg.InputText(key='coordenada-inicial', size=(5, 1)), sg.Text("Coordenada Final"), sg.InputText(key='coordenada-final', size=(5, 1))],
-            ]
-        return layout
-    
-    def layout_faz_tiro(self):
-        layout = [
-                [sg.Text("Digite a coordenada do tiro")],
-                [sg.Text("Coordenada do tiro"), sg.InputText(key='coordenada-tiro', size=(5, 1))],
-            ]
-        return layout
-
-    def get_coordinates(self, window, funcao):
-        print("inicia get_coodinates")
-        event, values = window.read()
-        if event == sg.WINDOW_CLOSED:
-            return None
-        return [event] if funcao == 'faz_tiro' else [event, None]
-
 
     def abre_imprimir_tabuleiro_gui(self, tamanho, oceano, funcao, nome_embarcacao=None, tamanho_embarcacao=None):
         print("iniciou abre_imprimir_tabuleiro_gui")
@@ -199,6 +120,9 @@ class ControladorJogo:
         coordendas = self.__tela_jogo.imprimir_tabuleiro_gui(tamanho, oceano, funcao, classe_embarcacao, nome_embarcacao, tamanho_embarcacao)
         return coordendas
 
+    def abre_imprimir_tabuleiro(self, tamanho, oceano):
+        embarcacao = Embarcacao
+        self.__tela_jogo.imprimir_tabuleiro(tamanho, oceano, embarcacao)
 
     def mapear_letra_numero(self, valor):
         print("inicia mapear_letra_numero")
